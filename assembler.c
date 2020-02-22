@@ -11,7 +11,7 @@
 
 
 //Converts a hexadecimal string to integer.
-int hex2int( char* hex)  
+int hex2int( char* hex)
 {
     int result=0;
 
@@ -22,21 +22,54 @@ int hex2int( char* hex)
         else if (('a'<=(*hex))&&((*hex)<='f'))
             result = result*16 + (*hex) -'a'+10;
         else if (('A'<=(*hex))&&((*hex)<='F'))
-            result = result*16 + (*hex) -'A'+10; 
+            result = result*16 + (*hex) -'A'+10;
         hex++;
     }
     return(result);
 }
 
+/*
+
+void asmRead(FILE *f,char s[][1000])
+{
+  if(f==NULL)
+  {
+    printf("\nFile does not exist");
+    exit(0);
+  }
+  int i=0,n=100;
+  while(fgets(s[i++],n,f)){
+    printf("\n%s",s[i-1]);
+  };
+}
+
+
+*/
 
 main()
-{   
+{
     FILE *fp;
-        char line[100];
-        char *token = NULL;
+    char line[100];
+    char *token = NULL;
     char *op1, *op2, *op3, *label;
     char ch;
     int  chch;
+
+/*   int n=0;
+   char a[1000];
+   while(fgets(a,1000,f))
+     n++;
+
+   fseek(f,0,SEEK_SET);
+
+   char s[n][1000];
+
+   asmRead(fp,s);
+*/
+
+
+
+
 
     int program[1000];
     int counter=0;  //holds the address of the machine code instruction
@@ -44,9 +77,9 @@ main()
 
 
 
-// A label is a symbol which mark a location in a program. In the example 
+// A label is a symbol which mark a location in a program. In the example
 // program above, the string "lpp", "loop" and "lp1" are labels.
-    struct label  
+    struct label
     {
         int location;
         char *label;
@@ -57,18 +90,18 @@ main()
 
 
 
-// Jump instructions cannot be assembled readily because we may not know the value of 
+// Jump instructions cannot be assembled readily because we may not know the value of
 // the label when we encountered a jump instruction. This happens if the label used by
-// that jump instruction appear below that jump instruction. This is the situation 
-// with the label "loop" in the example program above. Hence, the location of jump 
+// that jump instruction appear below that jump instruction. This is the situation
+// with the label "loop" in the example program above. Hence, the location of jump
 // instructions must be stored.
-    struct jumpinstruction   
+    struct jumpinstruction
     {
         int location;
         char *label;
     };
     struct jumpinstruction jumptable[100]; //There can be at most 100 jumps
-    int noofjumps=0;  //number of jumps encountered during assembly.    
+    int noofjumps=0;  //number of jumps encountered during assembly.
 
 
 
@@ -87,11 +120,11 @@ main()
 
 //Variables and labels are used by ldi instructions.
 //The memory for the variables are traditionally allocated at the end of the code section.
-//Hence their addresses are not known when we assemble a ldi instruction. Also, the value of 
+//Hence their addresses are not known when we assemble a ldi instruction. Also, the value of
 //a label may not be known when we encounter a ldi instruction which uses that label.
-//Hence, the location of the ldi instructions must be kept, and these instructions must be 
+//Hence, the location of the ldi instructions must be kept, and these instructions must be
 //modified when we discover the address of the label or variable that it uses.
-    struct ldiinstruction   
+    struct ldiinstruction
     {
         int location;
         char *name;
@@ -106,12 +139,16 @@ main()
 
     if (fp != NULL)
     {
-        while(fgets(line,sizeof line,fp)!= NULL)  //skip till .code section
+
+        while(fgets(line,sizeof line,fp)!= NULL)  //skip till .text section
         {
             token=strtok(line,"\n\t\r ");
-            if (strcmp(token,".code")==0 )
+            if (strcmp(token,".text")==0 )
                 break;
-        } 
+        }
+
+
+
         while(fgets(line,sizeof line,fp)!= NULL)
         {
             token=strtok(line,"\n\t\r ");  //get the instruction mnemonic or label
@@ -126,21 +163,21 @@ main()
                     program[counter]=0x1000+hex2int(op1);                        //generate the first 16-bit of the ldi instruction
                     counter++;                                                   //move to the second 16-bit of the ldi instruction
                     if ((op2[0]=='0')&&(op2[1]=='x'))                            //if the 2nd operand is twos complement hexadecimal
-                        program[counter]=hex2int(op2+2)&0xffff;              //convert it to integer and form the second 16-bit 
-                    else if ((  (op2[0])=='-') || ((op2[0]>='0')&&(op2[0]<='9')))       //if the 2nd operand is decimal 
-                        program[counter]=atoi(op2)&0xffff;                         //convert it to integer and form the second 16-bit 
+                        program[counter]=hex2int(op2+2)&0xffff;              //convert it to integer and form the second 16-bit
+                    else if ((  (op2[0])=='-') || ((op2[0]>='0')&&(op2[0]<='9')))       //if the 2nd operand is decimal
+                        program[counter]=atoi(op2)&0xffff;                         //convert it to integer and form the second 16-bit
                     else                                                           //if the second operand is not decimal or hexadecimal, it is a laber or a variable.
                     {                                                               //in this case, the 2nd 16-bits of the ldi instruction cannot be generated.
-                        lditable[noofldis].location = counter;                 //record the location of this 2nd 16-bit  
+                        lditable[noofldis].location = counter;                 //record the location of this 2nd 16-bit
                         op1=(char*)malloc(sizeof(op2));                         //and the name of the label/variable that it must contain
                         strcpy(op1,op2);                                        //in the lditable array.
                         lditable[noofldis].name = op1;
-                        noofldis++;                                             
-                    }       
-                    counter++;                                                     //skip to the next memory location 
-                }                                       
+                        noofldis++;
+                    }
+                    counter++;                                                     //skip to the next memory location
+                }
 
-                else if (strcmp(token,"ld")==0)      //------------LD INSTRUCTION---------------------         
+                else if (strcmp(token,"ld")==0)      //------------LD INSTRUCTION---------------------
                 {
                     op1 = strtok(NULL,"\n\t\r ");                //get the 1st operand of ld, which is the destination register
                     op2 = strtok(NULL,"\n\t\r ");                //get the 2nd operand of ld, which is the source register
@@ -159,24 +196,28 @@ main()
                 else if (strcmp(token,"jmp")==0)  //-------------- JUMP -----------------------------
                 {
                     op1 = strtok(NULL,"\n\t\r ");           //read the label
-                    jumptable[noofjumps].location = counter;    //write the jz instruction's location into the jumptable 
-                    op2=(char*)malloc(sizeof(op1));         //allocate space for the label                  
+                    jumptable[noofjumps].location = counter;    //write the jz instruction's location into the jumptable
+                    op2=(char*)malloc(sizeof(op1));         //allocate space for the label
                     strcpy(op2,op1);                //copy the label into the allocated space
                     jumptable[noofjumps].label=op2;         //point to the label from the jumptable
                     noofjumps++;                    //skip to the next empty location in jumptable
                     program[counter]=0x5000;            //write the incomplete instruction (just opcode) to memory
                     counter++;                  //skip to the next empty location in memory.
-                }               
+                }
                 else if (strcmp(token,"add")==0) //----------------- ADD -------------------------------
                 {
-                    op1 = strtok(NULL,"\n\t\r ");    
+                    op1 = strtok(NULL,"\n\t\r ");
                     op2 = strtok(NULL,"\n\t\r ");
                     op3 = strtok(NULL,"\n\t\r ");
-                    chch = (op1[0]-48)| ((op2[0]-48)<<3)|((op3[0]-48)<<6);  
-                    program[counter]=0x7000+((chch)&0x00ff); 
-                    counter++; 
+                    chch = (op1[0]-48)| ((op2[0]-48)<<3)|((op3[0]-48)<<6);
+                    program[counter]=0x7000+((chch)&0x00ff);
+                    counter++;
                 }
-                else if (strcmp(token,"sub")==0)
+                else if (strcmp(token,"addi")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"addis")==0)
                 {
                     //to be added
                 }
@@ -184,67 +225,184 @@ main()
                 {
                     //to be added
                 }
+                else if (strcmp(token,"andi")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"not")==0)
+                {
+                    op1 = strtok(NULL,"\n\t\r ");
+                    op2 = strtok(NULL,"\n\t\r ");
+                    ch = (op1[0]-48)| ((op2[0]-48)<<3);
+                    program[counter]=0x7500+((ch)&0x00ff);
+                    counter++;
+                }
+                else if (strcmp(token,"extsw")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"nand")==0)
+                {
+                    //to be added
+                }
                 else if (strcmp(token,"or")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"ori")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"subf")==0)
                 {
                     //to be added
                 }
                 else if (strcmp(token,"xor")==0)
                 {
                     //to be added
-                }                       
-                else if (strcmp(token,"not")==0)
-                {
-                    op1 = strtok(NULL,"\n\t\r ");
-                    op2 = strtok(NULL,"\n\t\r ");
-                    ch = (op1[0]-48)| ((op2[0]-48)<<3);
-                    program[counter]=0x7500+((ch)&0x00ff);  
-                    counter++;
                 }
-                else if (strcmp(token,"mov")==0)
+                else if (strcmp(token,"xori")==0)
                 {
                     //to be added
                 }
+                else if (strcmp(token,"lwz")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"std")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"stw")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"stwu")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"lhz")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"lha")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"sth")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"lbz")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"stb")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"rlwinm")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"sld")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"srd")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"srad")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"sradi")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"b")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"ba")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"bl")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"bclr")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"bc")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"bca")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"cmp")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"cmpi")==0)
+                {
+                    //to be added
+                }
+                else if (strcmp(token,"sc")==0)
+                {
+                    //to be added
+                }
+
+
+/*
                 else if (strcmp(token,"inc")==0)
                 {
                     op1 = strtok(NULL,"\n\t\r ");
                     ch = (op1[0]-48)| ((op1[0]-48)<<3);
-                    program[counter]=0x7700+((ch)&0x00ff);  
+                    program[counter]=0x7700+((ch)&0x00ff);
                     counter++;
                 }
                 else if (strcmp(token,"dec")==0)
                 {
-                                    //to be added
+                      //to be added
                 }
+*/
+
                 else //------WHAT IS ENCOUNTERED IS NOT AN INSTRUCTION BUT A LABEL. UPDATE THE LABEL TABLE--------
-                {
+                {                                           // no space between label name and :
                     labeltable[nooflabels].location = counter;  //buraya bir counter koy. error check
                     op1=(char*)malloc(sizeof(token));
                     strcpy(op1,token);
                     labeltable[nooflabels].label=op1;
                     nooflabels++;
-                } 
-                token = strtok(NULL,",\n\t\r ");  
+                }
+                token = strtok(NULL,",\n\t\r ");
             }
         }
 
 
 //================================= SECOND PASS ==============================
 
-                //supply the address fields of the jump and jz instructions from the 
-        int i,j;         
+                //supply the address fields of the jump and jz instructions from the
+        int i,j;
         for (i=0; i<noofjumps;i++)                                                                   //for all jump/jz instructions
         {
             j=0;
-            while ( strcmp(jumptable[i].label , labeltable[j].label) != 0 )             //if the label for this jump/jz does not match with the 
+            while ( strcmp(jumptable[i].label , labeltable[j].label) != 0 )             //if the label for this jump/jz does not match with the
                 j++;                                                                // jth label in the labeltable, check the next label..
             program[jumptable[i].location] +=(labeltable[j].location-jumptable[i].location-1)&0x0fff;       //copy the jump address into memory.
-        }                                                     
+        }
 
 
 
 
                 // search for the start of the .data segment
-        rewind(fp);  
+        rewind(fp);
         while(fgets(line,sizeof line,fp)!= NULL)  //skip till .data, if no .data, also ok.
         {
             token=strtok(line,"\n\t\r ");
@@ -259,10 +417,10 @@ main()
         while(fgets(line,sizeof line,fp)!= NULL)
         {
             token=strtok(line,"\n\t\r ");
-            if (strcmp(token,".code")==0 )  //go till the .code segment
+            if (strcmp(token,".text")==0 )  //go till the .text segment
                 break;
             else if (token[strlen(token)-1]==':')
-            {               
+            {
                 token[strlen(token)-1]='\0';  //will not cause memory leak, as we do not do malloc
                 variabletable[noofvariables].location=counter+dataarea;
                 op1=(char*)malloc(sizeof(token));
@@ -276,10 +434,10 @@ main()
                     token=strtok(NULL,"\n\t\r ");
                     dataarea+=atoi(token);
                 }
-                else if((token[0]=='0')&&(token[1]=='x')) 
-                    program[counter+dataarea]=hex2int(token+2)&0xffff; 
+                else if((token[0]=='0')&&(token[1]=='x'))
+                    program[counter+dataarea]=hex2int(token+2)&0xffff;
                 else if ((  (token[0])=='-') || ('0'<=(token[0])&&(token[0]<='9'))  )
-                    program[counter+dataarea]=atoi(token)&0xffff;  
+                    program[counter+dataarea]=atoi(token)&0xffff;
                 noofvariables++;
                 dataarea++;
             }
@@ -297,8 +455,8 @@ main()
             while ((j<noofvariables)&&( strcmp( lditable[i].name , variabletable[j].name)!=0 ))
                 j++;
             if (j<noofvariables)
-                program[lditable[i].location] = variabletable[j].location;              
-        } 
+                program[lditable[i].location] = variabletable[j].location;
+        }
 
 // supply the address fields for the ldi instructions from the label table
         for( i=0; i<noofldis;i++)
@@ -308,31 +466,31 @@ main()
                 j++;
             if (j<nooflabels){
                 program[lditable[i].location] = (labeltable[j].location)&0x0fff;
-                printf("%d %d %d\n", i, j, (labeltable[j].location));   
-            }           
-        } 
+                printf("%d %d %d\n", i, j, (labeltable[j].location));
+            }
+        }
 
 //display the resulting tables
         printf("LABEL TABLE\n");
         for (i=0;i<nooflabels;i++)
-            printf("%d %s\n", labeltable[i].location, labeltable[i].label); 
+            printf("%d %s\n", labeltable[i].location, labeltable[i].label);
         printf("\n");
-        printf("JUMP TABLE\n");
+        printf("JUMP TABLE\n");lditable
         for (i=0;i<noofjumps;i++)
-            printf("%d %s\n", jumptable[i].location, jumptable[i].label);   
+            printf("%d %s\n", jumptable[i].location, jumptable[i].label);
         printf("\n");
         printf("VARIABLE TABLE\n");
         for (i=0;i<noofvariables;i++)
-            printf("%d %s\n", variabletable[i].location, variabletable[i].name);    
+            printf("%d %s\n", variabletable[i].location, variabletable[i].name);
         printf("\n");
         printf("LDI INSTRUCTIONS\n");
         for (i=0;i<noofldis;i++)
-            printf("%d %s\n", lditable[i].location, lditable[i].name);  
+            printf("%d %s\n", lditable[i].location, lditable[i].name);
         printf("\n");
         fclose(fp);
         fp = fopen("RAM","w");
         fprintf(fp,"v2.0 raw\n");
         for (i=0;i<counter+dataarea;i++)
             fprintf(fp,"%04x\n",program[i]);
-    }   
+    }
 }
