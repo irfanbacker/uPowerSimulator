@@ -1260,6 +1260,19 @@ void main()
         else if(strcmp(insset[i].mne,"b")==0)
         {
           char aa[]="0";
+          strcat(tr[i],"010010");
+          //check for label or immediate and encode bit-6 to 29
+          strcat(tr[i],aa);
+          strcat(tr[i],"0");
+
+        }
+        else if(strcmp(insset[i].mne,"ba")==0)
+        {
+          char aa[]="0";
+          strcat(tr[i],"010010");
+          //check for label or immediate and encode bit-6 to 29
+          strcat(tr[i],aa);
+          strcat(tr[i],"0");
 
         }
       }
