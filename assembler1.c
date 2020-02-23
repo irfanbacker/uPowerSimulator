@@ -499,7 +499,7 @@ char mapreg(struct ins insset,char tr[][32],int i,int j)
   {
     if(strcmp(insset[i].op1,"0")==0)
     {
-      strcat(tr[1],"00000");
+      strcat(tr[i],"00000");
     }
     else if(strcmp(insset[i].op1,"1")==0)
     {
@@ -962,7 +962,7 @@ void parseLine(char s[][1000],int pass,struct symtbl st[],struct ins insset[],in
 void main()
 {
 
-  FILE *f=fopen("filename.asm","r");
+  FILE *f=fopen("program.asm","r");
 
   int n=0;
   char a[1000];
