@@ -421,7 +421,7 @@ void checkInstrutionType(char s[],struct ins insset[],int i)
         //strcpy(insset[i].op2,o2);
         //o2 = strtok(NULL,"\n\t\r ,)");
         //strcpy(insset[i].op3,o2);
-        //strcpy(insset[i].type,"X");
+        strcpy(insset[i].type,"I");
       }
       else if (strcmp(token,"ba")==0)
       {
@@ -429,6 +429,8 @@ void checkInstrutionType(char s[],struct ins insset[],int i)
           strcpy(insset[i].mne,token);
           o1 = strtok(NULL,"\n\t\r ,");
           strcpy(insset[i].op1,o1);
+          strcpy(insset[i].type,"I");
+
       }
       else if (strcmp(token,"bl")==0)
       {
@@ -483,7 +485,7 @@ void checkInstrutionType(char s[],struct ins insset[],int i)
 
       else //------WHAT IS ENCOUNTERED IS NOT AN INSTRUCTION BUT A LABEL. UPDATE THE LABEL TABLE--------
       {                                           // no space between label name and :
-          strcpy(insset.type,"label");
+          strcpy(insset[i].type,"label");
       }
 
 
