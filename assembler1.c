@@ -1,4 +1,7 @@
 #include<stdio.h>
+#include<string.h>
+#include<math.h>
+#include <stdlib.h>
 
 
 struct symtbl{
@@ -29,7 +32,7 @@ void asmRead(FILE *f,char s[][1000])
 }
 
 
-void checkInstrutionType(char s[],struct ins insset[],int i)
+void checkInstructionType(char s[],struct ins insset[],int i)
 {
   char *token=strtok(s,"\n\t\r ");  //get the instruction mnemonic or label
   char *o1;
@@ -488,14 +491,14 @@ void checkInstrutionType(char s[],struct ins insset[],int i)
           strcpy(insset[i].type,"label");
       }
 
-
+    }
 }
 
 
 
 
 
-char mapreg(struct ins insset,char tr[][32],int i,int j)
+char mapreg(struct ins insset[],char tr[][32],int i,int j)
 {
   if(j==1)
   {
@@ -893,33 +896,33 @@ char mapreg(struct ins insset,char tr[][32],int i,int j)
 }
 
 
-void decToBinary(int n,int bit,char tr[],int i)
+void decToBinary(int n,int bit,char tr[][32],int i)
 {
     // array to store binary number
     char binaryNum[32];
 
     // counter for binary array
-    int i = 0;
+    int j = 0;
     while (n > 0) {
 
         // storing remainder in binary array
-        binaryNum[i] = (n % 2) + 48;
+        binaryNum[j] = (n % 2) + 48;
         n = n / 2;
-        i++;
+        j++;
     }
-    while(i<bit)
+    while(j<bit)
     {
-      binaryNum[i]='0';
-      i++;
+      binaryNum[j]='0';
+      j++;
     }
-    binaryNum[i]='\0';
+    binaryNum[j]='\0';
 
     // printing binary array in reverse order
-    for (int j = 0; j < i/2; j++)
+    for (int k = 0; k < j/2; k++)
         {
-          char t=binaryNum[j];
-          binaryNum[j]=binaryNum[i-1-j];
-          binaryNum[i-1-j]=t;
+          char t=binaryNum[k];
+          binaryNum[k]=binaryNum[j-1-k];
+          binaryNum[j-1-k]=t;
 
         }
     strcat(tr[i],binaryNum);
@@ -964,19 +967,19 @@ void parseLine(char s[][1000],int pass,struct symtbl st[],struct ins insset[],in
 void main()
 {
 
-  FILE *f=fopen("program.asm","r");
+  FILE *fp=fopen("program.asm","r");
 
   int n=0;
   char a[1000];
 
-  while(fgets(a,1000,f))
+  while(fgets(a,1000,fp))
     n++;
 
-  fseek(f,0,SEEK_SET);
+  fseek(fp,0,SEEK_SET);
 
 
   char s[n][1000],t[n][1000];
-  asmRead(f,s);
+  asmRead(fp,s);
 
   struct symtbl st[1000];
   struct symtbl vt[1000];
@@ -986,6 +989,7 @@ void main()
   char *token;
 
   int f=-1;
+  int i,j;
   int vars=0,jumps=0,labels=0;
   int k=0;
   char tr[n][32];
@@ -1262,33 +1266,48 @@ void main()
           char aa[]="0";
           strcat(tr[i],"010010");
           //check for label or immediate and encode bit-6 to 29
+          for(j=0;j<labels;j++)
+          {
+            if(strcmp(st[j].name,insset[i].op1)==0)
+              break;
+          }
+          if(j==labels)
+          {
+            h=atoi(insset[i].op1);
+            decToBinary(h,24,tr,i);
+          }
+          else
+          {
+            decToBinary(st[j].location,24,tr,i);
+          }
           strcat(tr[i],aa);
           strcat(tr[i],"0");
 
         }
         else if(strcmp(insset[i].mne,"ba")==0)
         {
-          char aa[]="0";
+          char aa[]="1";
           strcat(tr[i],"010010");
-          //check for label or immediate and encode bit-6 to 29
+          for(j=0;j<labels;j++)
+          {
+            if(strcmp(st[j].name,insset[i].op1)==0)
+              break;
+          }
+          if(j==labels)
+          {
+            h=atoi(insset[i].op1);
+            decToBinary(h,24,tr,i);
+          }
+          else
+          {
+            decToBinary(st[j].location,24,tr,i);
+          }
           strcat(tr[i],aa);
           strcat(tr[i],"0");
 
         }
+
       }
     }
   }
-}
-
-
-
-
-//  parseLine(s,1,st,insset,n,t);
-
-//  parseline(s);
-
-
-
-
-
 }
