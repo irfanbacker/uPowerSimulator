@@ -3,6 +3,13 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <string.h>
+
+//--------------------------------------------------------------------------------------------------------
+
+char r[32][64];
+
+//--------------------------------------------------------------------------------------------------------
 
 void codeRead(FILE *f,char s[][32])
 {
@@ -24,6 +31,8 @@ void populateRAM()
 
 }
 
+//--------------------------------------------------------------------------------------------------------
+
 void getOpcode(char *op,char s[][32], int i)
 {
   for(int j=0;j<6;j++)
@@ -31,6 +40,23 @@ void getOpcode(char *op,char s[][32], int i)
     op[j]=s[i][j];
   }
 }
+
+void getxo(char *xo,char s[][32], int i)
+{
+  for(int j=21;j<32;j++)
+  {
+    xo[j]=s[i][j];
+  }
+}
+
+//--------------------------------------------------------------------------------------------------------
+
+void add(int ra[5],int rb[5],int rs[5])
+{
+  
+}
+
+//--------------------------------------------------------------------------------------------------------
 
 void main(int argc, char **argv)
 {
@@ -72,30 +98,51 @@ void main(int argc, char **argv)
   populateRAM();
 
   int n=0,i=0;
-  char s[1000][32],opcode[6];
+  char s[1000][32],opcode[6],xo[10],ra[5],rb[5],rs[5];
 
   fseek(f,0,SEEK_SET);
 
   n=codeRead(f,s);
 
-  printf("\n Select mode 1.) Step 2.) Full : ");
-  scanf("%d",mode);
-  if(mode==1) c=1;
-  else if(mode==2) c=n;
-
   flag=0;
   while(flag==0)
   {
-    if(c==n) flag=1;
-    else c++;
-    
+    if(c==i)
+    {
+      printf("\n Select mode 1.) Step 2.) Full : ");
+      scanf("%d",mode);
+      if(mode==1) c++;
+      else if(mode==2) c=n;
+    }
+
+    if(c==n){
+      flag=1;
+      break;
+    }
+
     for(;i<c;i++)
     {
       getOpcode(opcode,s,i);
 
-      if(strcmp(opcode,"")==0)
+      if(strcmp(opcode,"011111")==0) //OPCODE=31
       {
-
+        getxo(xo,s,i);
+        if(strcmp(xo,"01000010100")==0)// ADD
+        {
+          for(int j=6;j<11;j++)
+          {
+            rs[j]=s[i][j];
+          }
+          for(int j=11;j<16;j++)
+          {
+            ra[j]=s[i][j];
+          }
+          for(int j=16;j<21;j++)
+          {
+            rb[j]=s[i][j];
+          }
+          add(ra,rb,rs);
+        }
       }
       else if(strcmp(opcode,"")==0)
       {
