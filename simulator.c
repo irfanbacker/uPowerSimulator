@@ -7,7 +7,7 @@
 
 //--------------------------------------------------------------------------------------------------------
 
-char r[32][64];
+long int r[32];
 
 //--------------------------------------------------------------------------------------------------------
 
@@ -19,41 +19,28 @@ void codeRead(FILE *f,char s[][32])
     exit(1);
   }
   int i=0;
-  while(fgets(s[i],32,f)){
+  while(fgets(s[i],sizeof(int),f)){
     i++;
   };
   return i;
 }
 
-//Function to read variable table, label table and populate the ram
-void populateRAM()
+//Function to read variable table, label table and initialize the memory
+void initMem()
 {
 
 }
 
-//--------------------------------------------------------------------------------------------------------
-
-void getOpcode(char *op,char s[][32], int i)
+int extractBits(int num, int k, int p)
 {
-  for(int j=0;j<6;j++)
-  {
-    op[j]=s[i][j];
-  }
+    return (((1 << k) - 1) & (num >> (p)));
 }
 
-void getxo(char *xo,char s[][32], int i)
-{
-  for(int j=21;j<32;j++)
-  {
-    xo[j]=s[i][j];
-  }
-}
+//---------------------------------------INSTRUCTION FUNCTIONS--------------------------------------------
 
-//--------------------------------------------------------------------------------------------------------
-
-void add(int ra[5],int rb[5],int rs[5])
+void add(int rs,int ra,int rb)
 {
-  
+
 }
 
 //--------------------------------------------------------------------------------------------------------
@@ -93,12 +80,13 @@ void main(int argc, char **argv)
     waitpid(pid,0,0);
   }
 
-  FILE *f=fopen("program.o","r");
+  FILE *f=fopen("program.o","rb");
 
-  populateRAM();
+  initMem();
 
   int n=0,i=0;
-  char s[1000][32],opcode[6],xo[10],ra[5],rb[5],rs[5];
+  int s[1000],opcode,xo,ra,rb,rs;
+  int si,ds,sh,me,mb,li,aa,lk,bd;
 
   fseek(f,0,SEEK_SET);
 
@@ -122,29 +110,174 @@ void main(int argc, char **argv)
 
     for(;i<c;i++)
     {
-      getOpcode(opcode,s,i);
+      opcode=extractBits(s[i],6,0);
 
-      if(strcmp(opcode,"011111")==0) //OPCODE=31
+      if(opcode==31) //OPCODE=31 <------------------- NOT COMPLETED / CONFUSION
       {
-        getxo(xo,s,i);
-        if(strcmp(xo,"01000010100")==0)// ADD
+        xo=extractBits(s[i],9,22);
+        if((xo==266)&&(!extractBits(s[i],1,21))&&(!extractBits(s[i],1,32)))// ADD
         {
-          for(int j=6;j<11;j++)
-          {
-            rs[j]=s[i][j];
-          }
-          for(int j=11;j<16;j++)
-          {
-            ra[j]=s[i][j];
-          }
-          for(int j=16;j<21;j++)
-          {
-            rb[j]=s[i][j];
-          }
-          add(ra,rb,rs);
+          rs=extractBits(s[i],5,6);
+          ra=extractBits(s[i],5,11);
+          rb=extractBits(s[i],5,16);
+          add(rs,ra,rb);
+        }
+        else if(xo==28)
+        {
+
         }
       }
-      else if(strcmp(opcode,"")==0)
+      else if(opcode==14)// ADDI
+      {
+        si=extractBits(s[i],16,16);
+        rs=extractBits(s[i],5,6);
+        ra=extractBits(s[i],5,11);
+        addi(rs,ra,si);
+      }
+      else if(opcode==15)// ADDIS
+      {
+        si=extractBits(s[i],16,16);
+        rs=extractBits(s[i],5,6);
+        ra=extractBits(s[i],5,11);
+        addis(rs,ra,si);
+      }
+      else if(opcode==28)// ANDI
+      {
+        si=extractBits(s[i],16,16);
+        rs=extractBits(s[i],5,6);
+        ra=extractBits(s[i],5,11);
+        andi(rs,ra,si);
+      }
+      else if(opcode==24)// ORI
+      {
+        si=extractBits(s[i],16,16);
+        rs=extractBits(s[i],5,6);
+        ra=extractBits(s[i],5,11);
+        ori(rs,ra,si);
+      }
+      else if(opcode==26)// XORI
+      {
+        si=extractBits(s[i],16,16);
+        rs=extractBits(s[i],5,6);
+        ra=extractBits(s[i],5,11);
+        xori(rs,ra,si);
+      }
+      else if(opcode==58)
+      {
+        xo=extractBits(s[i],2,30);
+        if(xo==0)// LD
+        {
+          rs=extractBits(s[i],5,6);
+          ra=extractBits(s[i],5,11);
+          ds=extractBits(s[i],14,16);
+          ld(rs,ra,ds);
+        }
+      }
+      else if(opcode==32)// LWZ
+      {
+        si=extractBits(s[i],16,16);
+        rs=extractBits(s[i],5,6);
+        ra=extractBits(s[i],5,11);
+        lwz(rs,ra,si);
+      }
+      else if(opcode==62)
+      {
+        xo=extractBits(s[i],2,30);
+        if(xo==0)// STD
+        {
+          rs=extractBits(s[i],5,6);
+          ra=extractBits(s[i],5,11);
+          ds=extractBits(s[i],14,16);
+          std(rs,ra,ds);
+        }
+      }
+      else if(opcode==36)// STW
+      {
+        si=extractBits(s[i],16,16);
+        rs=extractBits(s[i],5,6);
+        ra=extractBits(s[i],5,11);
+        stw(rs,ra,si);
+      }
+      else if(opcode==37)// STWU
+      {
+        si=extractBits(s[i],16,16);
+        rs=extractBits(s[i],5,6);
+        ra=extractBits(s[i],5,11);
+        stwu(rs,ra,si);
+      }
+      else if(opcode==40)// LHZ
+      {
+        si=extractBits(s[i],16,16);
+        rs=extractBits(s[i],5,6);
+        ra=extractBits(s[i],5,11);
+        lhz(rs,ra,si);
+      }
+      else if(opcode==42)// LHA
+      {
+        si=extractBits(s[i],16,16);
+        rs=extractBits(s[i],5,6);
+        ra=extractBits(s[i],5,11);
+        lha(rs,ra,si);
+      }
+      else if(opcode==44)// STH
+      {
+        si=extractBits(s[i],16,16);
+        rs=extractBits(s[i],5,6);
+        ra=extractBits(s[i],5,11);
+        stw(rs,ra,si);
+      }
+      else if(opcode==34)// LBZ
+      {
+        si=extractBits(s[i],16,16);
+        rs=extractBits(s[i],5,6);
+        ra=extractBits(s[i],5,11);
+        lbz(rs,ra,si);
+      }
+      else if(opcode==38)// STB
+      {
+        si=extractBits(s[i],16,16);
+        rs=extractBits(s[i],5,6);
+        ra=extractBits(s[i],5,11);
+        stb(rs,ra,si);
+      }
+      else if((opcode==21)&&(!extractBits(s[i],1,31)))// RLWINM
+      {
+        rs=extractBits(s[i],5,6);
+        ra=extractBits(s[i],5,11);
+        sh=extractBits(s[i],5,16);
+        mb=extractBits(s[i],5,21);
+        me=extractBits(s[i],5,26);
+        rlwinm(rs,ra,sh,mb,me);
+      }
+      else if(opcode==18)
+      {
+        lk=extractBits(s[i],1,31);
+        aa=extractBits(s[i],1,30);
+        li=extractBits(s[i],24,6);
+        if(lk==0)
+        {
+          if(aa) ba(li);// BA
+          else b(li);// B
+        }
+        else bi(li);// BI
+      }
+      else if((opcode==38)&&(!extractBits(s[i],1,31)))
+      {
+        aa=extractBits(s[i],1,30);
+        rs=extractBits(s[i],5,6);
+        ra=extractBits(s[i],5,11);
+        bd=extractBits(s[i],14,16);
+        if(!aa) bc(); // BC  <------------------- NOT COMPLETED
+        else bca();// BCA  <------------------- NOT COMPLETED
+      }
+      else if(opcode==11)// CMPI
+      {
+        si=extractBits(s[i],16,16);
+        rs=extractBits(s[i],5,6);
+        ra=extractBits(s[i],5,11);
+        cmpi(rs,ra,si);
+      }
+      else if(opcode==17)// SC <------------------- NOT COMPLETED
       {
 
       }
