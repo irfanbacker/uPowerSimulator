@@ -14,6 +14,8 @@ struct ins{
   char op1[100];
   char op2[100];
   char op3[100];
+  char op4[100];
+  char op5[100];
   char type[100];
 };
 
@@ -369,7 +371,18 @@ void checkInstructionType(char s[],struct ins insset[],int i)
       }
       else if (strcmp(token,"rlwinm")==0)
       {
-
+        strcpy(insset[i].mne,token);
+        o1 = strtok(NULL,"\n\t\r ,");
+        strcpy(insset[i].op1,o1);
+        o2 = strtok(NULL,"\n\t\r ,");
+        strcpy(insset[i].op2,o2);
+        o2 = strtok(NULL,"\n\t\r ,");
+        strcpy(insset[i].op3,o2);
+        o2 = strtok(NULL,"\n\t\r ,");
+        strcpy(insset[i].op4,o2);
+        o2 = strtok(NULL,"\n\t\r ,");
+        strcpy(insset[i].op5,o2);
+        strcpy(insset[i].type,"M");
       }
       else if (strcmp(token,"sld")==0)
       {
@@ -1144,7 +1157,7 @@ void main()
         }
         else if(strcmp(insset[i].mne,"lwz")==0)
         {
-          strcat(tr[i],"100000");   //opcode 32    D
+          strcat(tr[i],"100000");   //opcode 32    D rt,ra,si
           mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,3);
           h=atoi(insset[i].op2);
@@ -1225,7 +1238,16 @@ void main()
         }
         else if(strcmp(insset[i].mne,"rlwinm")==0)
         {
-
+          strcat(tr[i],"010101");
+          mapreg(insset,tr,i,2);
+          mapreg(insset,tr,i,1);
+          h=atoi(insset[i].op3);
+          decToBinary(h,5,tr,i);
+          h=atoi(insset[i].op4);
+          decToBinary(h,5,tr,i);
+          h=atoi(insset[i].op5);
+          decToBinary(h,5,tr,i);
+          strcat(tr[i],"0");
         }
         else if(strcmp(insset[i].mne,"sld")==0)
         {
@@ -1259,6 +1281,16 @@ void main()
         }
         else if(strcmp(insset[i].mne,"sradi")==0)
         {
+          //ra,rs,sh {
+          strcat(tr[i],"011111");
+          mapreg(insset,tr,i,2);
+          mapreg(insset,tr,i,1);
+          
+          h=atoi(insset[i].op3);
+          decToBinary(h,5,tr,i);
+          strcat(tr[i],"110011101");
+          strcat();
+          strcat(tr[i],"0");
 
         }
         else if(strcmp(insset[i].mne,"b")==0)
@@ -1304,6 +1336,51 @@ void main()
           }
           strcat(tr[i],aa);
           strcat(tr[i],"0");
+
+        }
+        else if(strcmp(insset[i].mne,"bl")==0)
+        {
+          //char aa[]="1";
+          strcat(tr[i],"010010");
+          for(j=0;j<labels;j++)
+          {
+            if(strcmp(st[j].name,insset[i].op1)==0)
+              break;
+          }
+          if(j==labels)
+          {
+            h=atoi(insset[i].op1);
+            decToBinary(h,24,tr,i);
+          }
+          else
+          {
+            decToBinary(st[j].location,24,tr,i);
+          }
+          strcat(tr[i],"01");
+
+        }
+        else if(strcmp(insset[i].mne,"bclr")==0)
+        {
+
+        }
+        else if(strcmp(insset[i].mne,"bc")==0)
+        {
+
+        }
+        else if(strcmp(insset[i].mne,"bca")==0)
+        {
+
+        }
+        else if(strcmp(insset[i].mne,"cmp")==0)
+        {
+
+        }
+        else if(strcmp(insset[i].mne,"cmpi")==0)
+        {
+
+        }
+        else if(strcmp(insset[i].mne,"sc")==0)
+        {
 
         }
 
