@@ -1285,11 +1285,12 @@ void main()
           strcat(tr[i],"011111");
           mapreg(insset,tr,i,2);
           mapreg(insset,tr,i,1);
-          
           h=atoi(insset[i].op3);
-          decToBinary(h,5,tr,i);
+          int u=h%int(pow(2,5));
+          int v=h/int(pow(2,5));
+          decToBinary(u,5,tr,i);
           strcat(tr[i],"110011101");
-          strcat();
+          decToBinary(v,1,tr,i);
           strcat(tr[i],"0");
 
         }
