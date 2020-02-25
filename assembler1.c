@@ -49,8 +49,8 @@ void checkInstructionType(char s[],struct ins insset[],int i)
       {
 
 
-          op1 = strtok(NULL,"\n\t\r ");                                //get the 1st operand of ldi, which is the register that ldi loads
-          op2 = strtok(NULL,"\n\t\r ");                                //get the 2nd operand of ldi, which is the data that is to be loaded
+          op1 = strtok(NULL,"\t ");                                //get the 1st operand of ldi, which is the register that ldi loads
+          op2 = strtok(NULL,"\t ");                                //get the 2nd operand of ldi, which is the data that is to be loaded
           program[counter]=0x1000+hex2int(op1);                        //generate the first 16-bit of the ldi instruction
           counter++;                                                   //move to the second 16-bit of the ldi instruction
           if ((op2[0]=='0')&&(op2[1]=='x'))                            //if the 2nd operand is twos complement hexadecimal
@@ -67,10 +67,10 @@ void checkInstructionType(char s[],struct ins insset[],int i)
           }
           counter++;
 
-          strcpy(insset[i].mne,token);op1 = strtok(NULL,"\n\t\r ");
-          o1 = strtok(NULL,"\n\t\r ");
+          strcpy(insset[i].mne,token);op1 = strtok(NULL,"\t ");
+          o1 = strtok(NULL,"\t ");
           strcpy(insset[i].op1,o1);
-          o2 = strtok(NULL,"\n\t\r ");
+          o2 = strtok(NULL,"\t ");
           strcpy(insset[i].op2,o2);
           strcpy(insset[i].type,"");
 
@@ -82,8 +82,8 @@ void checkInstructionType(char s[],struct ins insset[],int i)
       if (strcmp(token,"ld")==0)      //------------LD INSTRUCTION---------------------
       {
         /*
-          op1 = strtok(NULL,"\n\t\r ");                //get the 1st operand of ld, which is the destination register
-          op2 = strtok(NULL,"\n\t\r ");                //get the 2nd operand of ld, which is the source register
+          op1 = strtok(NULL,"\t ");                //get the 1st operand of ld, which is the destination register
+          op2 = strtok(NULL,"\t ");                //get the 2nd operand of ld, which is the source register
           ch = (op1[0]-48)| ((op2[0]-48) << 3);        //form bits 11-0 of machine code. 48 is ASCII value of '0'
           program[counter]=0x2000+((ch)&0x00ff);       //form the instruction and write it to memory
           counter++;
@@ -91,11 +91,11 @@ void checkInstructionType(char s[],struct ins insset[],int i)
 
                                           //skip to the next empty location in memory
                                           strcpy(insset[i].mne,token);
-                                          o1 = strtok(NULL,"\n\t\r ");
+                                          o1 = strtok(NULL,"\t ");
                                           strcpy(insset[i].op1,o1);
-                                          o2 = strtok(NULL,"\n\t\r ,");
+                                          o2 = strtok(NULL,"\t ,");
                                           strcpy(insset[i].op2,o2);
-                                          o2 = strtok(NULL,"\n\t\r ,(");
+                                          o2 = strtok(NULL,"\t ,(");
                                           strcpy(insset[i].op3,o2);
                                           strcpy(insset[i].type,"DS");
       }
@@ -104,9 +104,9 @@ void checkInstructionType(char s[],struct ins insset[],int i)
       {
           //to be added
           strcpy(insset[i].mne,token);
-          o1 = strtok(NULL,"\n\t\r ");
+          o1 = strtok(NULL,"\t ");
           strcpy(insset[i].op1,o1);
-          o2 = strtok(NULL,"\n\t\r ");
+          o2 = strtok(NULL,"\t ");
           strcpy(insset[i].op2,o2);
           strcpy(insset[i].type,"DS");
       }
@@ -118,7 +118,7 @@ void checkInstructionType(char s[],struct ins insset[],int i)
       else if (strcmp(token,"jmp")==0)  //-------------- JUMP -----------------------------
       {
         /*
-          op1 = strtok(NULL,"\n\t\r ");           //read the label
+          op1 = strtok(NULL,"\t ");           //read the label
           jumptable[noofjumps].location = counter;    //write the jz instruction's location into the jumptable
           op2=(char*)malloc(sizeof(op1));         //allocate space for the label
           strcpy(op2,op1);                //copy the label into the allocated space
@@ -131,70 +131,70 @@ void checkInstructionType(char s[],struct ins insset[],int i)
       else if (strcmp(token,"add")==0) //----------------- ADD -------------------------------
       {
         /*
-          op1 = strtok(NULL,"\n\t\r ");
-          op2 = strtok(NULL,"\n\t\r ");
-          op3 = strtok(NULL,"\n\t\r ");
+          op1 = strtok(NULL,"\t ");
+          op2 = strtok(NULL,"\t ");
+          op3 = strtok(NULL,"\t ");
           chch = (op1[0]-48)| ((op2[0]-48)<<3)|((op3[0]-48)<<6);
           program[counter]=0x7000+((chch)&0x00ff);
           counter++;
           */
           strcpy(insset[i].mne,token);
-          o1 = strtok(NULL,"\n\t\r ");
+          o1 = strtok(NULL,"\t ");
           strcpy(insset[i].op1,o1);
-          o2 = strtok(NULL,"\n\t\r ,");
+          o2 = strtok(NULL,"\t ,");
           strcpy(insset[i].op2,o2);
-          o2 = strtok(NULL,"\n\t\r ,(");
+          o2 = strtok(NULL,"\t ,(");
           strcpy(insset[i].op3,o2);
           strcpy(insset[i].type,"XO");
       }
       else if (strcmp(token,"addi")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ");
+        o1 = strtok(NULL,"\t ");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,");
+        o2 = strtok(NULL,"\t ,");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"D");
       }
       else if (strcmp(token,"addis")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"D");
       }
       else if (strcmp(token,"and")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"X");
       }
       else if (strcmp(token,"andi")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"D");
       }
       else if (strcmp(token,"not")==0)
       {
-        /*  op1 = strtok(NULL,"\n\t\r ");
-          op2 = strtok(NULL,"\n\t\r ");
+        /*  op1 = strtok(NULL,"\t ");
+          op2 = strtok(NULL,"\t ");
           ch = (op1[0]-48)| ((op2[0]-48)<<3);
           program[counter]=0x7500+((ch)&0x00ff);
           counter++;
@@ -207,235 +207,235 @@ void checkInstructionType(char s[],struct ins insset[],int i)
       else if (strcmp(token,"nand")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"X");
       }
       else if (strcmp(token,"or")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"X");
       }
       else if (strcmp(token,"ori")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"D");
       }
       else if (strcmp(token,"subf")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"XO");
       }
       else if (strcmp(token,"xor")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"X");
       }
       else if (strcmp(token,"xori")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"D");
       }
       else if (strcmp(token,"lwz")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"D");
       }
       else if (strcmp(token,"std")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"DS");
       }
       else if (strcmp(token,"stw")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"D");
       }
       else if (strcmp(token,"stwu")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"D");
       }
       else if (strcmp(token,"lhz")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"D");
       }
       else if (strcmp(token,"lha")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"D");
       }
       else if (strcmp(token,"sth")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"D");
       }
       else if (strcmp(token,"lbz")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"D");
       }
       else if (strcmp(token,"stb")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"D");
       }
       else if (strcmp(token,"rlwinm")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,");
+        o2 = strtok(NULL,"\t ,");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,");
+        o2 = strtok(NULL,"\t ,");
         strcpy(insset[i].op3,o2);
-        o2 = strtok(NULL,"\n\t\r ,");
+        o2 = strtok(NULL,"\t ,");
         strcpy(insset[i].op4,o2);
-        o2 = strtok(NULL,"\n\t\r ,");
+        o2 = strtok(NULL,"\t ,");
         strcpy(insset[i].op5,o2);
         strcpy(insset[i].type,"M");
       }
       else if (strcmp(token,"sld")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"X");
       }
       else if (strcmp(token,"srd")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"X");
       }
       else if (strcmp(token,"srad")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"X");
       }
       else if (strcmp(token,"sradi")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\n\t\r ,(");
+        o2 = strtok(NULL,"\t ,(");
         strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\n\t\r ,)");
+        o2 = strtok(NULL,"\t ,)");
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"XS");
       }
       else if (strcmp(token,"b")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        //o2 = strtok(NULL,"\n\t\r ,(");
+        //o2 = strtok(NULL,"\t ,(");
         //strcpy(insset[i].op2,o2);
-        //o2 = strtok(NULL,"\n\t\r ,)");
+        //o2 = strtok(NULL,"\t ,)");
         //strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"I");
       }
@@ -443,7 +443,7 @@ void checkInstructionType(char s[],struct ins insset[],int i)
       {
           //to be added
           strcpy(insset[i].mne,token);
-          o1 = strtok(NULL,"\n\t\r ,");
+          o1 = strtok(NULL,"\t ,");
           strcpy(insset[i].op1,o1);
           strcpy(insset[i].type,"I");
 
@@ -451,11 +451,11 @@ void checkInstructionType(char s[],struct ins insset[],int i)
       else if (strcmp(token,"bl")==0)
       {
         strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\n\t\r ,");
+        o1 = strtok(NULL,"\t ,");
         strcpy(insset[i].op1,o1);
-        //o2 = strtok(NULL,"\n\t\r ,(");
+        //o2 = strtok(NULL,"\t ,(");
         //strcpy(insset[i].op2,o2);
-        //o2 = strtok(NULL,"\n\t\r ,)");
+        //o2 = strtok(NULL,"\t ,)");
         //strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"I");
       }
@@ -488,7 +488,7 @@ void checkInstructionType(char s[],struct ins insset[],int i)
 /*
       else if (strcmp(token,"inc")==0)
       {
-          op1 = strtok(NULL,"\n\t\r ");
+          op1 = strtok(NULL,"\t ");
           ch = (op1[0]-48)| ((op1[0]-48)<<3);
           program[counter]=0x7700+((ch)&0x00ff);
           counter++;
