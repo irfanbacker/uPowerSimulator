@@ -473,15 +473,30 @@ void checkInstructionType(char s[],struct ins insset[],int i)
       }
       else if (strcmp(token,"cmp")==0)
       {
-          //to be added
+        strcpy(insset[i].mne,token);
+        o1 = strtok(NULL,"\t ,");
+        strcpy(insset[i].op1,o1);
+        o2 = strtok(NULL,"\t ,(");
+        strcpy(insset[i].op2,o2);
+        o2 = strtok(NULL,"\t ,)");
+        strcpy(insset[i].op3,o2);
+        strcpy(insset[i].type,"X");
       }
       else if (strcmp(token,"cmpi")==0)
       {
-          //to be added
+        strcpy(insset[i].mne,token);
+        o1 = strtok(NULL,"\t ,");
+        strcpy(insset[i].op1,o1);
+        o2 = strtok(NULL,"\t ,(");
+        strcpy(insset[i].op2,o2);
+        o2 = strtok(NULL,"\t ,)");
+        strcpy(insset[i].op3,o2);
+        strcpy(insset[i].type,"D");
       }
       else if (strcmp(token,"sc")==0)
       {
-          //to be added
+        strcpy(insset[i].mne,token);
+        strcpy(insset[i].type,"SC");
       }
 
 
@@ -1081,8 +1096,8 @@ void main()
         else if(strcmp(insset[i].mne,"and")==0)
         {
           strcat(tr[i],"011111");     //opcode 31  X
-          mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,2);
+          mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,3);
           strcat(tr[i],"0000011100");
           strcat(tr[i],"0");
@@ -1097,11 +1112,15 @@ void main()
           decToBinary(h,16,tr,i);
 
         }
+        else if(strcmp(insset[i].mne,"extsw")==0)
+        {
+
+        }
         else if(strcmp(insset[i].mne,"nand")==0)
         {
           strcat(tr[i],"011111");     //opcode 31  X
-          mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,2);
+          mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,3);
           strcat(tr[i],"0111011100");
           strcat(tr[i],"0");
@@ -1110,8 +1129,8 @@ void main()
         else if(strcmp(insset[i].mne,"or")==0)
         {
           strcat(tr[i],"011111");     //opcode 31  X
-          mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,2);
+          mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,3);
           strcat(tr[i],"0110111100");
           strcat(tr[i],"0");
@@ -1139,8 +1158,8 @@ void main()
         else if(strcmp(insset[i].mne,"xor")==0)
         {
           strcat(tr[i],"011111");     //opcode 31  X
-          mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,2);
+          mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,3);
           strcat(tr[i],"0100111100");
           strcat(tr[i],"0");
@@ -1252,8 +1271,8 @@ void main()
         else if(strcmp(insset[i].mne,"sld")==0)
         {
           strcat(tr[i],"011111");     //opcode 31  X
-          mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,2);
+          mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,3);
           strcat(tr[i],"0000011011");
           strcat(tr[i],"0");
@@ -1262,8 +1281,8 @@ void main()
         else if(strcmp(insset[i].mne,"srd")==0)
         {
           strcat(tr[i],"011111");     //opcode 31  X
-          mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,2);
+          mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,3);
           strcat(tr[i],"1000011011");
           strcat(tr[i],"0");
@@ -1272,8 +1291,8 @@ void main()
         else if(strcmp(insset[i].mne,"srad")==0)
         {
           strcat(tr[i],"011111");     //opcode 31  X
-          mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,2);
+          mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,3);
           strcat(tr[i],"1100011010");
           strcat(tr[i],"0");
@@ -1374,11 +1393,27 @@ void main()
         }
         else if(strcmp(insset[i].mne,"cmp")==0)
         {
+          strcpy(tr[i],"011111");
+          h=atoi(insset[i].op1);
+          decToBinary(h,3,tr,i);
+          // should do stract(tr[i],"/");
+          strcat(tr[i],"1");
+          mapreg(insset,tr,i,2);
+          mapreg(insset,tr,i,3);
+          strcat(tr[i],"0000000000");
+          // should do strcat(tr[i],"/");
 
         }
         else if(strcmp(insset[i].mne,"cmpi")==0)
         {
-
+          strcat(tr[i],"001011");
+          h=atoi(insset[i].op1);
+          decToBinary(h,3,tr,i);
+          //should           // should do stract(tr[i],"/");
+          strcat(tr[i],"1");
+          mapreg(insset,tr,i,2);
+          h=atoi(insset[i].op3);
+          decToBinary(h,16,tr,i);
         }
         else if(strcmp(insset[i].mne,"sc")==0)
         {
