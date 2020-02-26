@@ -7,7 +7,7 @@
 
 //--------------------------------------------------------------------------------------------------------
 
-long int r[32];
+long int r[32],srr0,lr,cr;
 
 //--------------------------------------------------------------------------------------------------------
 
@@ -31,16 +31,66 @@ void initMem()
 
 }
 
-int extractBits(int num, int k, int p)
+int extractBits(int num, int k, int pos)
 {
+    int p=32-pos-k;
     return (((1 << k) - 1) & (num >> (p)));
+}
+
+int signExt_16(int num) {
+    long int value = (0x000000000000FFFF & num);
+    long int mask = 0x0000000000008000;
+    if (mask & num) {
+        value += 0xFFFFFFFFFFFF0000;
+    }
+    return value;
 }
 
 //---------------------------------------INSTRUCTION FUNCTIONS--------------------------------------------
 
-void add(int rs,int ra,int rb)
+void addi(int rs,int ra,int si)
 {
+  long int im=signExt_16(si);
+  r[rs]=r[ra]+im;
+}
 
+void addis(int rs,int ra,int si)
+{
+  long int im=signExt_16(si);
+  im=im<<16;
+  r[rs]=r[ra]+im;
+}
+
+void andi(int rs,int ra,int si)
+{
+  long int im = (0x000000000000FFFF & si);
+  r[rs] = r[ra] & im;
+}
+
+void ori(int rs,int ra,int si)
+{
+  if(!((!rs)&&(!ra)&&(!si)))
+  {
+    long int im = (0x000000000000FFFF & si);
+    r[rs] = r[ra] | im;
+  }
+}
+
+void xori(int rs,int ra,int si)
+{
+  if(!((!rs)&&(!ra)&&(!si)))
+  {
+    long int im = (0x000000000000FFFF & si);
+    r[rs] = r[ra] ^ im;
+  }
+}
+
+void ld(int ra,int ra,int ds)
+{
+  long int dsi = (0x000000000000FFFF & si);
+  dsi = dsi<<2;
+  long int ea = signExt_16(dsi) + r[ra];
+  r[rt] = memory(ea,8);  // <--------------------------- MEMORY NOT STARTED
 }
 
 //--------------------------------------------------------------------------------------------------------
@@ -85,8 +135,9 @@ void main(int argc, char **argv)
   initMem();
 
   int n=0,i=0;
-  int s[1000],opcode,xo,ra,rb,rs;
-  int si,ds,sh,me,mb,li,aa,lk,bd;
+  unsigned int s[1000],opcode,xo,ra,rb,rs;
+  unsigned int ds,sh,me,mb,li,aa,lk,bd;
+  int si;
 
   fseek(f,0,SEEK_SET);
 
@@ -115,7 +166,7 @@ void main(int argc, char **argv)
       if(opcode==31) //OPCODE=31 <------------------- NOT COMPLETED / CONFUSION
       {
         xo=extractBits(s[i],9,22);
-        if((xo==266)&&(!extractBits(s[i],1,21))&&(!extractBits(s[i],1,32)))// ADD
+        if((xo==266)&&(!extractBits(s[i],1,21))&&(!extractBits(s[i],1,31)))// ADD
         {
           rs=extractBits(s[i],5,6);
           ra=extractBits(s[i],5,11);
