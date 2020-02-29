@@ -941,6 +941,268 @@ char mapreg(struct ins insset[],char tr[][32],int i,int j)
       strcat(tr[i],"11111");
     }
   }
+  else if(j==4)
+  {
+      if(strcmp(insset[i].op4,"0")==0)
+      {
+        strcat(tr[i],"00000");
+      }
+      else if(strcmp(insset[i].op4,"1")==0)
+      {
+        strcat(tr[i],"00001");
+      }
+      else if(strcmp(insset[i].op4,"2")==0)
+      {
+        strcat(tr[i],"00010");
+      }
+      else if(strcmp(insset[i].op4,"3")==0)
+      {
+        strcat(tr[i],"00011");
+      }
+      else if(strcmp(insset[i].op4,"4")==0)
+      {
+        strcat(tr[i],"00100");
+      }
+      else if(strcmp(insset[i].op4,"5")==0)
+      {
+        strcat(tr[i],"00101");
+      }
+      else if(strcmp(insset[i].op4,"6")==0)
+      {
+        strcat(tr[i],"00110");
+      }
+      else if(strcmp(insset[i].op4,"7")==0)
+      {
+        strcat(tr[i],"00111");
+      }
+      else if(strcmp(insset[i].op4,"8")==0)
+      {
+        strcat(tr[i],"01000");
+      }
+      else if(strcmp(insset[i].op4,"9")==0)
+      {
+        strcat(tr[i],"01001");
+      }
+      else if(strcmp(insset[i].op4,"10")==0)
+      {
+        strcat(tr[i],"01010");
+      }
+      else if(strcmp(insset[i].op4,"11")==0)
+      {
+        strcat(tr[i],"01011");
+      }
+      else if(strcmp(insset[i].op4,"12")==0)
+      {
+        strcat(tr[i],"01100");
+      }
+      else if(strcmp(insset[i].op4,"13")==0)
+      {
+        strcat(tr[i],"01101");
+      }
+      else if(strcmp(insset[i].op4,"14")==0)
+      {
+        strcat(tr[i],"01110");
+      }
+      else if(strcmp(insset[i].op4,"15")==0)
+      {
+        strcat(tr[i],"01111");
+      }
+      else if(strcmp(insset[i].op4,"16")==0)
+      {
+        strcat(tr[i],"10000");
+      }
+      else if(strcmp(insset[i].op4,"17")==0)
+      {
+        strcat(tr[i],"10001");
+      }
+      else if(strcmp(insset[i].op4,"18")==0)
+      {
+        strcat(tr[i],"10010");
+      }
+      else if(strcmp(insset[i].op4,"19")==0)
+      {
+        strcat(tr[i],"10011");
+      }
+      else if(strcmp(insset[i].op4,"20")==0)
+      {
+        strcat(tr[i],"10100");
+      }
+      else if(strcmp(insset[i].op4,"21")==0)
+      {
+        strcat(tr[i],"10101");
+      }
+      else if(strcmp(insset[i].op4,"22")==0)
+      {
+        strcat(tr[i],"10110");
+      }
+      else if(strcmp(insset[i].op4,"23")==0)
+      {
+        strcat(tr[i],"10111");
+      }
+      else if(strcmp(insset[i].op4,"24")==0)
+      {
+        strcat(tr[i],"11000");
+      }
+      else if(strcmp(insset[i].op4,"25")==0)
+      {
+        strcat(tr[i],"11001");
+      }
+      else if(strcmp(insset[i].op4,"26")==0)
+      {
+        strcat(tr[i],"11010");
+      }
+      else if(strcmp(insset[i].op4,"27")==0)
+      {
+        strcat(tr[i],"11011");
+      }
+      else if(strcmp(insset[i].op4,"28")==0)
+      {
+        strcat(tr[i],"11100");
+      }
+      else if(strcmp(insset[i].op4"29")==0)
+      {
+        strcat(tr[i],"11101");
+      }
+      else if(strcmp(insset[i].op4,"30")==0)
+      {
+        strcat(tr[i],"11110");
+      }
+      else if(strcmp(insset[i].op4,"31")==0)
+      {
+        strcat(tr[i],"11111");
+      }
+  }
+  else if(j==5)
+  {
+    if(strcmp(insset[i].op5,"0")==0)
+    {
+      strcat(tr[i],"00000");
+    }
+    else if(strcmp(insset[i].op5,"1")==0)
+    {
+      strcat(tr[i],"00001");
+    }
+    else if(strcmp(insset[i].op5,"2")==0)
+    {
+      strcat(tr[i],"00010");
+    }
+    else if(strcmp(insset[i].op5,"3")==0)
+    {
+      strcat(tr[i],"00011");
+    }
+    else if(strcmp(insset[i].op5,"4")==0)
+    {
+      strcat(tr[i],"00100");
+    }
+    else if(strcmp(insset[i].op5,"5")==0)
+    {
+      strcat(tr[i],"00101");
+    }
+    else if(strcmp(insset[i].op5,"6")==0)
+    {
+      strcat(tr[i],"00110");
+    }
+    else if(strcmp(insset[i].op5,"7")==0)
+    {
+      strcat(tr[i],"00111");
+    }
+    else if(strcmp(insset[i].op5,"8")==0)
+    {
+      strcat(tr[i],"01000");
+    }
+    else if(strcmp(insset[i].op5,"9")==0)
+    {
+      strcat(tr[i],"01001");
+    }
+    else if(strcmp(insset[i].op5,"10")==0)
+    {
+      strcat(tr[i],"01010");
+    }
+    else if(strcmp(insset[i].op5,"11")==0)
+    {
+      strcat(tr[i],"01011");
+    }
+    else if(strcmp(insset[i].op5,"12")==0)
+    {
+      strcat(tr[i],"01100");
+    }
+    else if(strcmp(insset[i].op5,"13")==0)
+    {
+      strcat(tr[i],"01101");
+    }
+    else if(strcmp(insset[i].op5,"14")==0)
+    {
+      strcat(tr[i],"01110");
+    }
+    else if(strcmp(insset[i].op5,"15")==0)
+    {
+      strcat(tr[i],"01111");
+    }
+    else if(strcmp(insset[i].op5,"16")==0)
+    {
+      strcat(tr[i],"10000");
+    }
+    else if(strcmp(insset[i].op5,"17")==0)
+    {
+      strcat(tr[i],"10001");
+    }
+    else if(strcmp(insset[i].op5,"18")==0)
+    {
+      strcat(tr[i],"10010");
+    }
+    else if(strcmp(insset[i].op5,"19")==0)
+    {
+      strcat(tr[i],"10011");
+    }
+    else if(strcmp(insset[i].op5,"20")==0)
+    {
+      strcat(tr[i],"10100");
+    }
+    else if(strcmp(insset[i].op5,"21")==0)
+    {
+      strcat(tr[i],"10101");
+    }
+    else if(strcmp(insset[i].op5,"22")==0)
+    {
+      strcat(tr[i],"10110");
+    }
+    else if(strcmp(insset[i].op5,"23")==0)
+    {
+      strcat(tr[i],"10111");
+    }
+    else if(strcmp(insset[i].op5,"24")==0)
+    {
+      strcat(tr[i],"11000");
+    }
+    else if(strcmp(insset[i].op5,"25")==0)
+    {
+      strcat(tr[i],"11001");
+    }
+    else if(strcmp(insset[i].op5,"26")==0)
+    {
+      strcat(tr[i],"11010");
+    }
+    else if(strcmp(insset[i].op5,"27")==0)
+    {
+      strcat(tr[i],"11011");
+    }
+    else if(strcmp(insset[i].op5,"28")==0)
+    {
+      strcat(tr[i],"11100");
+    }
+    else if(strcmp(insset[i].op5,"29")==0)
+    {
+      strcat(tr[i],"11101");
+    }
+    else if(strcmp(insset[i].op5,"30")==0)
+    {
+      strcat(tr[i],"11110");
+    }
+    else if(strcmp(insset[i].op5,"31")==0)
+    {
+      strcat(tr[i],"11111");
+    }
+  }
 }
 
 
