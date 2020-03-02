@@ -1059,7 +1059,7 @@ char mapreg(struct ins insset[],char tr[][32],int i,int j)
       {
         strcat(tr[i],"11100");
       }
-      else if(strcmp(insset[i].op4"29")==0)
+      else if(strcmp(insset[i].op4,"29")==0)
       {
         strcat(tr[i],"11101");
       }
@@ -1205,7 +1205,7 @@ char mapreg(struct ins insset[],char tr[][32],int i,int j)
   }
 }
 
-
+// should do for -ve values
 void decToBinary(int n,int bit,char tr[][32],int i)
 {
     // array to store binary number
@@ -1222,7 +1222,7 @@ void decToBinary(int n,int bit,char tr[][32],int i)
     }
     while(j<bit)
     {
-      binaryNum[j]='0';
+      binaryNum[j]= binaryNum[j-1];
       j++;
     }
     binaryNum[j]='\0';
@@ -1587,8 +1587,8 @@ void main()
           mapreg(insset,tr,i,2);
           mapreg(insset,tr,i,1);
           h=atoi(insset[i].op3);
-          int u=h%int(pow(2,5));
-          int v=h/int(pow(2,5));
+          int u=h%(int)(pow(2,5));
+          int v=h/(int)(pow(2,5));
           decToBinary(u,5,tr,i);
           strcat(tr[i],"110011101");
           decToBinary(v,1,tr,i);
@@ -1717,12 +1717,14 @@ void main()
           strcpy(tr[i],"011111");
           h=atoi(insset[i].op1);
           decToBinary(h,3,tr,i);
-          // should do stract(tr[i],"/");
+          //  '/'
+          strcat(tr[i],"0");
           strcat(tr[i],"1");
           mapreg(insset,tr,i,2);
           mapreg(insset,tr,i,3);
           strcat(tr[i],"0000000000");
-          // should do strcat(tr[i],"/");
+          //  '/'
+          strcat(tr[i],"0");
 
         }
         else if(strcmp(insset[i].mne,"cmpi")==0)
@@ -1730,7 +1732,8 @@ void main()
           strcat(tr[i],"001011");
           h=atoi(insset[i].op1);
           decToBinary(h,3,tr,i);
-          //should           // should do stract(tr[i],"/");
+          //   '/'
+          strcat(tr[i],"0");
           strcat(tr[i],"1");
           mapreg(insset,tr,i,2);
           h=atoi(insset[i].op3);
@@ -1739,10 +1742,15 @@ void main()
         else if(strcmp(insset[i].mne,"sc")==0)
         {
           strcpy(tr[i],"010001");
-
+          strcat(tr[i],"00000000000000");
+          strcat(tr[i],"0000000");       //LEV
+          strcat(tr[i],"00010");
         }
 
       }
     }
   }
+
+
+  //write into output file 
 }
