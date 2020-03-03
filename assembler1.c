@@ -44,100 +44,21 @@ void checkInstructionType(char s[],struct ins insset[],int i)
 
   while (token)
   {
-    /*
-      if (strcmp(token,"ldi")==0)        //---------------LDI INSTRUCTION--------------------
-      {
 
-
-          op1 = strtok(NULL,"\t ");                                //get the 1st operand of ldi, which is the register that ldi loads
-          op2 = strtok(NULL,"\t ");                                //get the 2nd operand of ldi, which is the data that is to be loaded
-          program[counter]=0x1000+hex2int(op1);                        //generate the first 16-bit of the ldi instruction
-          counter++;                                                   //move to the second 16-bit of the ldi instruction
-          if ((op2[0]=='0')&&(op2[1]=='x'))                            //if the 2nd operand is twos complement hexadecimal
-              program[counter]=hex2int(op2+2)&0xffff;              //convert it to integer and form the second 16-bit
-          else if ((  (op2[0])=='-') || ((op2[0]>='0')&&(op2[0]<='9')))       //if the 2nd operand is decimal
-              program[counter]=atoi(op2)&0xffff;                         //convert it to integer and form the second 16-bit
-          else                                                           //if the second operand is not decimal or hexadecimal, it is a laber or a variable.
-          {                                                               //in this case, the 2nd 16-bits of the ldi instruction cannot be generated.
-              lditable[noofldis].location = counter;                 //record the location of this 2nd 16-bit
-              op1=(char*)malloc(sizeof(op2));                         //and the name of the label/variable that it must contain
-              strcpy(op1,op2);                                        //in the lditable array.
-              lditable[noofldis].name = op1;
-              noofldis++;
-          }
-          counter++;
-
-          strcpy(insset[i].mne,token);op1 = strtok(NULL,"\t ");
-          o1 = strtok(NULL,"\t ");
-          strcpy(insset[i].op1,o1);
-          o2 = strtok(NULL,"\t ");
-          strcpy(insset[i].op2,o2);
-          strcpy(insset[i].type,"");
-
-
-                                                             //skip to the next memory location
-      }
-      */
 
       if (strcmp(token,"ld")==0)      //------------LD INSTRUCTION---------------------
       {
-        /*
-          op1 = strtok(NULL,"\t ");                //get the 1st operand of ld, which is the destination register
-          op2 = strtok(NULL,"\t ");                //get the 2nd operand of ld, which is the source register
-          ch = (op1[0]-48)| ((op2[0]-48) << 3);        //form bits 11-0 of machine code. 48 is ASCII value of '0'
-          program[counter]=0x2000+((ch)&0x00ff);       //form the instruction and write it to memory
-          counter++;
-          */
-
-                                          //skip to the next empty location in memory
-                                          strcpy(insset[i].mne,token);
-                                          o1 = strtok(NULL,"\t ");
-                                          strcpy(insset[i].op1,o1);
-                                          o2 = strtok(NULL,"\t ,");
-                                          strcpy(insset[i].op2,o2);
-                                          o2 = strtok(NULL,"\t ,(");
-                                          strcpy(insset[i].op3,o2);
-                                          strcpy(insset[i].type,"DS");
-      }
-      /*
-      else if (strcmp(token,"st")==0) //-------------ST INSTRUCTION--------------------
-      {
-          //to be added
           strcpy(insset[i].mne,token);
           o1 = strtok(NULL,"\t ");
           strcpy(insset[i].op1,o1);
-          o2 = strtok(NULL,"\t ");
+          o2 = strtok(NULL,"\t ,");
           strcpy(insset[i].op2,o2);
+          o2 = strtok(NULL,"\t ,(");
+          strcpy(insset[i].op3,o2);
           strcpy(insset[i].type,"DS");
-      }
-      */
-      else if (strcmp(token,"jz")==0) //------------- CONDITIONAL JUMP ------------------
-      {
-          //to be added
-      }
-      else if (strcmp(token,"jmp")==0)  //-------------- JUMP -----------------------------
-      {
-        /*
-          op1 = strtok(NULL,"\t ");           //read the label
-          jumptable[noofjumps].location = counter;    //write the jz instruction's location into the jumptable
-          op2=(char*)malloc(sizeof(op1));         //allocate space for the label
-          strcpy(op2,op1);                //copy the label into the allocated space
-          jumptable[noofjumps].label=op2;         //point to the label from the jumptable
-          noofjumps++;                    //skip to the next empty location in jumptable
-          program[counter]=0x5000;            //write the incomplete instruction (just opcode) to memory
-          counter++;
-          */                  //skip to the next empty location in memory.
       }
       else if (strcmp(token,"add")==0) //----------------- ADD -------------------------------
       {
-        /*
-          op1 = strtok(NULL,"\t ");
-          op2 = strtok(NULL,"\t ");
-          op3 = strtok(NULL,"\t ");
-          chch = (op1[0]-48)| ((op2[0]-48)<<3)|((op3[0]-48)<<6);
-          program[counter]=0x7000+((chch)&0x00ff);
-          counter++;
-          */
           strcpy(insset[i].mne,token);
           o1 = strtok(NULL,"\t ");
           strcpy(insset[i].op1,o1);
@@ -202,7 +123,12 @@ void checkInstructionType(char s[],struct ins insset[],int i)
       }
       else if (strcmp(token,"extsw")==0)
       {
-
+        strcpy(insset[i].mne,token);
+        o1 = strtok(NULL,"\t ,");
+        strcpy(insset[i].op1,o1);
+        o1 = strtok(NULL,"\t ,");
+        strcpy(insset[i].op2,o1);
+        strcpy(insset[i].type,"X");
       }
       else if (strcmp(token,"nand")==0)
       {
@@ -518,22 +444,6 @@ void checkInstructionType(char s[],struct ins insset[],int i)
         strcpy(insset[i].mne,token);
         strcpy(insset[i].type,"SC");
       }
-
-
-/*
-      else if (strcmp(token,"inc")==0)
-      {
-          op1 = strtok(NULL,"\t ");
-          ch = (op1[0]-48)| ((op1[0]-48)<<3);
-          program[counter]=0x7700+((ch)&0x00ff);
-          counter++;
-      }
-      else if (strcmp(token,"dec")==0)
-      {
-            //to be added
-      }
-*/
-
       else //------WHAT IS ENCOUNTERED IS NOT AN INSTRUCTION BUT A LABEL. UPDATE THE LABEL TABLE--------
       {                                           // no space between label name and :
           strcpy(insset[i].type,"label");
@@ -1239,41 +1149,7 @@ void decToBinary(int n,int bit,char tr[][32],int i)
 
 }
 
-/*
 
-void translateInstruction()
-{
-
-}
-
-
-
-
-void parseLine(char s[][1000],int pass,struct symtbl st[],struct ins insset[],int n,char t[][1000])
-{
-  for(int i=0;i<n;i++)
-  {
-    if(s[i][1]=='/'&&s[i][0]=='/')
-      continue;
-    else if(s[i][0]=='/'&&s[i][1]=='*')
-    {
-      int f=0;
-      while(f==0)
-      {
-        for(int j=0;j<strlen(s[i]);j++)
-        {
-          if(s[i][j]=='*' && s[i][j+1]=='/')
-            f=1;
-        }
-        if(f==0)
-          i++;
-      }
-
-    }
-
-  }
-
-*/
 void main()
 {
 
@@ -1396,7 +1272,12 @@ void main()
         }
         else if(strcmp(insset[i].mne,"extsw")==0)
         {
-
+          strcpy(tr[i],"011111");
+          mapreg(insset,tr,i,2);
+          mapreg(insset,tr,i,1);
+          strcat(tr[i],"00000");
+          strcat(tr[i],"1111011010");
+          strcat(tr[i],"0");
         }
         else if(strcmp(insset[i].mne,"nand")==0)
         {
@@ -1752,5 +1633,5 @@ void main()
   }
 
 
-  //write into output file 
+  //write into output file
 }
