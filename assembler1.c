@@ -112,15 +112,6 @@ void checkInstructionType(char s[],struct ins insset[],int i)
         strcpy(insset[i].op3,o2);
         strcpy(insset[i].type,"D");
       }
-      else if (strcmp(token,"not")==0)
-      {
-        /*  op1 = strtok(NULL,"\t ");
-          op2 = strtok(NULL,"\t ");
-          ch = (op1[0]-48)| ((op2[0]-48)<<3);
-          program[counter]=0x7500+((ch)&0x00ff);
-          counter++;
-          */
-      }
       else if (strcmp(token,"extsw")==0)
       {
         strcpy(insset[i].mne,token);
@@ -1171,6 +1162,7 @@ void main()
   struct symtbl vt[1000];
   struct ins insset[1000];
   struct symtbl jt[1000];
+  struct ins inst[1000];
 
   char *token;
 
@@ -1180,8 +1172,45 @@ void main()
   int k=0;
   char tr[n][32];
   long long int h;
+  int ij=-1;
 
 
+  for(i=0;i<n;i++)
+  {
+    token=strtok(s[i],": \n");
+    if(strcmp(token,".data")==0)
+      {
+        f=0;
+        continue;
+      }
+    else if(strcmp(token,".text")==0)
+      {
+        f=1;
+        continue;
+      }
+    else
+    {
+      if(f==0)
+      {
+        continue;
+      }
+      else if(f==1)
+      {
+        checkInstructionType(s[i],inst,i);
+        if(strcmp(inst[i].type,"label")==0)
+        {
+          continue;
+        }
+        else
+        {
+          ij++;
+          strcpy(t[ij],s[i]);
+        }
+      }
+    }
+  }
+
+  f=-1;
   for(i=0;i<n;i++)
   {
     token=strtok(s[i],": ");
