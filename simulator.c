@@ -11,7 +11,7 @@ long int r[32],srr0,lr,cr;
 
 //--------------------------------------------------------------------------------------------------------
 
-void codeRead(FILE *f,char s[][32])
+int codeRead(FILE *f,unsigned int *s)
 {
   if(f==NULL)
   {
@@ -19,7 +19,7 @@ void codeRead(FILE *f,char s[][32])
     exit(1);
   }
   int i=0;
-  while(fgets(s[i],sizeof(int),f)){
+  while(fread(s+(sizeof(int)*i),sizeof(int),1,f)){
     i++;
   };
   return i;
@@ -46,7 +46,18 @@ int signExt_16(int num) {
     return value;
 }
 
+int memory(int a,int b)
+{
+
+}
+
 //---------------------------------------INSTRUCTION FUNCTIONS--------------------------------------------
+
+void add(int rs,int ra,int si)
+{
+  long int im=signExt_16(si);
+  r[rs]=r[ra]+im;
+}
 
 void addi(int rs,int ra,int si)
 {
@@ -85,31 +96,96 @@ void xori(int rs,int ra,int si)
   }
 }
 
-void ld(int ra,int ra,int ds)
+void ld(int rs,int ra,int ds)
 {
-  long int dsi = (0x000000000000FFFF & si);
+  long int dsi = (0x000000000000FFFF & ds);
   dsi = dsi<<2;
   long int ea = signExt_16(dsi) + r[ra];
-  r[rt] = memory(ea,8);  // <--------------------------- MEMORY NOT STARTED
+  r[rs] = memory(ea,8);  // <--------------------------- MEMORY NOT STARTED
+}
+
+void lwz(int rs,int ra,int si)
+{
+
+}
+
+void std(int rs,int ra,int si)
+{
+
+}
+
+void stw(int rs,int ra,int si)
+{
+
+}
+
+void stwu(int rs,int ra,int si)
+{
+
+}
+
+void lhz(int rs,int ra,int si)
+{
+
+}
+
+void lha(int rs,int ra,int si)
+{
+
+}
+
+void sth(int rs,int ra,int si)
+{
+
+}
+
+void lbz(int rs,int ra,int si)
+{
+
+}
+
+void stb(int rs,int ra,int si)
+{
+
+}
+
+void rlwinm(int rs,int ra,int sh,int mb, int me)
+{
+
+}
+
+void ba(int li)
+{
+
+}
+
+void b(int li)
+{
+
+}
+
+void bi(int li)
+{
+
 }
 
 //--------------------------------------------------------------------------------------------------------
 
-void main(int argc, char **argv)
+void main()
 {
   int flag=0,mode=-1,c=0;
-  char fname[100];
-  while(flag==0)
-  {
+  char fname[100],ch;
+  //while(flag==0)
+  //{
     printf("\n Enter filename: ");
     gets(fname);
 
-    FILE *source=fopen(argv[1],"r");
-    if( access(argv[1], F_OK ) == -1 ) {
-      printf("\n File %s doesnt exist!",*argv[1]);
+    FILE *source=fopen(fname,"r");
+    if( access(fname, F_OK ) == -1 ) {
+      printf("\n File %s doesnt exist!",fname);
     }
-    else flag=1;
-  };
+    //else flag=1;
+  //};
   FILE *dest=fopen("program.asm","w");
 
   while( ( ch = fgetc(source) ) != EOF )
@@ -149,7 +225,7 @@ void main(int argc, char **argv)
     if(c==i)
     {
       printf("\n Select mode 1.) Step 2.) Full : ");
-      scanf("%d",mode);
+      scanf("%d",&mode);
       if(mode==1) c++;
       else if(mode==2) c=n;
     }
