@@ -1158,6 +1158,9 @@ void main()
   char s[n][1000],t[n][1000];
   asmRead(fp,s);
 
+  char dat[n][1000];
+  int jk=-1;
+
   struct symtbl st[1000];
   struct symtbl vt[1000];
   struct ins insset[1000];
@@ -1192,7 +1195,8 @@ void main()
     {
       if(f==0)
       {
-        continue;
+        jk++;
+        strcpy(dat[jk],s[i]);
       }
       else if(f==1)
       {
@@ -1213,7 +1217,7 @@ void main()
   f=-1;
   for(i=0;i<n;i++)
   {
-    token=strtok(s[i],": ");
+    token=strtok(s[i],": \n");
     if(strcmp(token,".data")==0)
       {
         f=0;
