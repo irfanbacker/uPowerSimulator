@@ -17,7 +17,7 @@ struct ins{
   char op4[100];
   char op5[100];
   char type[100];
-};
+}insset[1000];
 
 
 void asmRead(FILE *f,char s[][1000])
@@ -31,423 +31,421 @@ void asmRead(FILE *f,char s[][1000])
   while(fgets(s[i++],n,f)){
     printf("\n%s",s[i-1]);
   };
+
+  printf("\nASM.......");
 }
 
 
-void checkInstructionType(char s[],struct ins insset[],int i)
+void checkInstructionType(char s[],int i)
 {
-  char *token=strtok(s,"\n\t\r ");  //get the instruction mnemonic or label
-  char *o1;
-  char *o2;
-  char *o3;
+  char *o1=NULL;
+  char *o2=NULL;
+  char *o3=NULL;
+  char temptok[100];
+  strcpy(temptok,s);
+  char *token=strtok(temptok,"\n\t\r ");
 
-
-  while (token)
+  if(token==NULL) ;
+  else if (strcmp(token,"ld")==0)      //------------LD INSTRUCTION---------------------
   {
+      strcpy(insset[i].mne,token);
+      o1 = strtok(NULL,"\t ");
+      strcpy(insset[i].op1,o1);
+      o2 = strtok(NULL,"\t ,");
+      strcpy(insset[i].op2,o2);
+      o2 = strtok(NULL,"\t ,(\n");
+      strcpy(insset[i].op3,o2);
+      strcpy(insset[i].type,"DS");
+  }
+  else if (strcmp(token,"add")==0) //----------------- ADD -------------------------------
+  {
+      strcpy(insset[i].mne,token);
+      o1 = strtok(NULL,"\t ");
+      strcpy(insset[i].op1,o1);
+      o2 = strtok(NULL,"\t ,");
+      strcpy(insset[i].op2,o2);
+      o2 = strtok(NULL,"\t ,(\n");
+      strcpy(insset[i].op3,o2);
+      strcpy(insset[i].type,"XO");
+  }
+  else if (strcmp(token,"addi")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL," ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,(\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"addis")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"and")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"X");
+  }
+  else if (strcmp(token,"andi")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"extsw")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o1 = strtok(NULL,"\t ,\n");
+    strcpy(insset[i].op2,o1);
+    strcpy(insset[i].type,"X");
+  }
+  else if (strcmp(token,"nand")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"X");
+  }
+  else if (strcmp(token,"or")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"X");
+  }
+  else if (strcmp(token,"ori")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"subf")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"XO");
+  }
+  else if (strcmp(token,"xor")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"X");
+  }
+  else if (strcmp(token,"xori")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"lwz")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"std")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"DS");
+  }
+  else if (strcmp(token,"stw")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"stwu")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"lhz")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"lha")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"sth")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"lbz")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"stb")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"rlwinm")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op3,o2);
+    o2 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op4,o2);
+    o2 = strtok(NULL,"\t ,\n");
+    strcpy(insset[i].op5,o2);
+    strcpy(insset[i].type,"M");
+  }
+  else if (strcmp(token,"sld")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"X");
+  }
+  else if (strcmp(token,"srd")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"X");
+  }
+  else if (strcmp(token,"srad")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"X");
+  }
+  else if (strcmp(token,"sradi")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"XS");
+  }
+  else if (strcmp(token,"b")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,\n");
+    strcpy(insset[i].op1,o1);
+    //o2 = strtok(NULL,"\t ,(");
+    //strcpy(insset[i].op2,o2);
+    //o2 = strtok(NULL,"\t ,)\n");
+    //strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"I");
+  }
+  else if (strcmp(token,"ba")==0)
+  {
+      //to be added
+      strcpy(insset[i].mne,token);
+      o1 = strtok(NULL,"\t ,\n");
+      strcpy(insset[i].op1,o1);
+      strcpy(insset[i].type,"I");
 
+  }
+  else if (strcmp(token,"bl")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,\n");
+    strcpy(insset[i].op1,o1);
+    //o2 = strtok(NULL,"\t ,(");
+    //strcpy(insset[i].op2,o2);
+    //o2 = strtok(NULL,"\t ,)\n");
+    //strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"I");
+  }
+  else if (strcmp(token,"bclr")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1=strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o1 = strtok(NULL,"\t ,\n");
+    strcpy(insset[i].op2,o1);
+    strcpy(insset[i].type,"XL");
 
-      if (strcmp(token,"ld")==0)      //------------LD INSTRUCTION---------------------
-      {
-          strcpy(insset[i].mne,token);
-          o1 = strtok(NULL,"\t ");
-          strcpy(insset[i].op1,o1);
-          o2 = strtok(NULL,"\t ,");
-          strcpy(insset[i].op2,o2);
-          o2 = strtok(NULL,"\t ,(");
-          strcpy(insset[i].op3,o2);
-          strcpy(insset[i].type,"DS");
-      }
-      else if (strcmp(token,"add")==0) //----------------- ADD -------------------------------
-      {
-          strcpy(insset[i].mne,token);
-          o1 = strtok(NULL,"\t ");
-          strcpy(insset[i].op1,o1);
-          o2 = strtok(NULL,"\t ,");
-          strcpy(insset[i].op2,o2);
-          o2 = strtok(NULL,"\t ,(");
-          strcpy(insset[i].op3,o2);
-          strcpy(insset[i].type,"XO");
-      }
-      else if (strcmp(token,"addi")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"D");
-      }
-      else if (strcmp(token,"addis")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"D");
-      }
-      else if (strcmp(token,"and")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"X");
-      }
-      else if (strcmp(token,"andi")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"D");
-      }
-      else if (strcmp(token,"extsw")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op2,o1);
-        strcpy(insset[i].type,"X");
-      }
-      else if (strcmp(token,"nand")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"X");
-      }
-      else if (strcmp(token,"or")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"X");
-      }
-      else if (strcmp(token,"ori")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"D");
-      }
-      else if (strcmp(token,"subf")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"XO");
-      }
-      else if (strcmp(token,"xor")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"X");
-      }
-      else if (strcmp(token,"xori")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"D");
-      }
-      else if (strcmp(token,"lwz")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"D");
-      }
-      else if (strcmp(token,"std")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"DS");
-      }
-      else if (strcmp(token,"stw")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"D");
-      }
-      else if (strcmp(token,"stwu")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"D");
-      }
-      else if (strcmp(token,"lhz")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"D");
-      }
-      else if (strcmp(token,"lha")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"D");
-      }
-      else if (strcmp(token,"sth")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"D");
-      }
-      else if (strcmp(token,"lbz")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"D");
-      }
-      else if (strcmp(token,"stb")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"D");
-      }
-      else if (strcmp(token,"rlwinm")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op3,o2);
-        o2 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op4,o2);
-        o2 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op5,o2);
-        strcpy(insset[i].type,"M");
-      }
-      else if (strcmp(token,"sld")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"X");
-      }
-      else if (strcmp(token,"srd")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"X");
-      }
-      else if (strcmp(token,"srad")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"X");
-      }
-      else if (strcmp(token,"sradi")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"XS");
-      }
-      else if (strcmp(token,"b")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        //o2 = strtok(NULL,"\t ,(");
-        //strcpy(insset[i].op2,o2);
-        //o2 = strtok(NULL,"\t ,)");
-        //strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"I");
-      }
-      else if (strcmp(token,"ba")==0)
-      {
-          //to be added
-          strcpy(insset[i].mne,token);
-          o1 = strtok(NULL,"\t ,");
-          strcpy(insset[i].op1,o1);
-          strcpy(insset[i].type,"I");
-
-      }
-      else if (strcmp(token,"bl")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        //o2 = strtok(NULL,"\t ,(");
-        //strcpy(insset[i].op2,o2);
-        //o2 = strtok(NULL,"\t ,)");
-        //strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"I");
-      }
-      else if (strcmp(token,"bclr")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1=strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o1=strtok(NULL,"\t ,");
-        strcpy(insset[i].op2,o1);
-        strcpy(insset[i].type,"XL");
-
-      }
-      else if (strcmp(token,"bc")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1=strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o1=strtok(NULL,"\t ,");
-        strcpy(insset[i].op2,o1);
-        o1=strtok(NULL,"\t ,");
-        strcpy(insset[i].op3,o1);
-        strcpy(insset[i].type,"B");
-      }
-      else if (strcmp(token,"bca")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1=strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o1=strtok(NULL,"\t ,");
-        strcpy(insset[i].op2,o1);
-        o1=strtok(NULL,"\t ,");
-        strcpy(insset[i].op3,o1);
-        strcpy(insset[i].type,"B");
-      }
-      else if (strcmp(token,"cmp")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"X");
-      }
-      else if (strcmp(token,"cmpi")==0)
-      {
-        strcpy(insset[i].mne,token);
-        o1 = strtok(NULL,"\t ,");
-        strcpy(insset[i].op1,o1);
-        o2 = strtok(NULL,"\t ,(");
-        strcpy(insset[i].op2,o2);
-        o2 = strtok(NULL,"\t ,)");
-        strcpy(insset[i].op3,o2);
-        strcpy(insset[i].type,"D");
-      }
-      else if (strcmp(token,"sc")==0)
-      {
-        strcpy(insset[i].mne,token);
-        strcpy(insset[i].type,"SC");
-      }
-      else //------WHAT IS ENCOUNTERED IS NOT AN INSTRUCTION BUT A LABEL. UPDATE THE LABEL TABLE--------
-      {                                           // no space between label name and :
-          strcpy(insset[i].type,"label");
-      }
-
-    }
+  }
+  else if (strcmp(token,"bc")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1=strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o1=strtok(NULL,"\t ,");
+    strcpy(insset[i].op2,o1);
+    o1 = strtok(NULL,"\t ,\n");
+    strcpy(insset[i].op3,o1);
+    strcpy(insset[i].type,"B");
+  }
+  else if (strcmp(token,"bca")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1=strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o1=strtok(NULL,"\t ,");
+    strcpy(insset[i].op2,o1);
+    o1=strtok(NULL,"\t ,\n");
+    strcpy(insset[i].op3,o1);
+    strcpy(insset[i].type,"B");
+  }
+  else if (strcmp(token,"cmp")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"X");
+  }
+  else if (strcmp(token,"cmpi")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"sc")==0)
+  {
+    strcpy(insset[i].mne,token);
+    strcpy(insset[i].type,"SC");
+  }
+  else //------WHAT IS ENCOUNTERED IS NOT AN INSTRUCTION BUT A LABEL. UPDATE THE LABEL TABLE--------
+  {                                           // no space between label name and :
+      strcpy(insset[i].type,"label");
+  }
 }
 
 
 
 
 
-char mapreg(struct ins insset[],char tr[][32],int i,int j)
+char mapreg(struct ins insset[],char tr[][33],int i,int j)
 {
   if(j==1)
   {
@@ -1104,17 +1102,27 @@ char mapreg(struct ins insset[],char tr[][32],int i,int j)
       strcat(tr[i],"11111");
     }
   }
+  printf("\nmapreg on %d %s",j,tr[i]);
 }
 
 // should do for -ve values
-void decToBinary(int n,int bit,char tr[][32],int i)
+void decToBinary(int n,int bit,char tr[][33],int i)
 {
     // array to store binary number
     char binaryNum[32];
 
     // counter for binary array
-    int j = 0;
-    while (n > 0) {
+    int j = 0,l;
+    if(n==0)
+    {
+      for(int g=0;g<bit;g++)
+        strcat(tr[i],"0");
+    }
+    else if(n>0)
+    {
+
+
+    while (n != 0) {
 
         // storing remainder in binary array
         binaryNum[j] = (n % 2) + 48;
@@ -1123,11 +1131,29 @@ void decToBinary(int n,int bit,char tr[][32],int i)
     }
     while(j<bit)
     {
-      binaryNum[j]= binaryNum[j-1];
+      binaryNum[j]= '0';
+      j++;
+    }
+    binaryNum[j]='\0';
+  }
+  else
+  {
+    int x=(-1)*n;
+    while (x != 0) {
+
+        // storing remainder in binary array
+        binaryNum[j] = (x % 2) + 48;
+        x = x / 2;
+        j++;
+    }
+    while(j<bit)
+    {
+      binaryNum[j]= '0';
       j++;
     }
     binaryNum[j]='\0';
 
+  }
     // printing binary array in reverse order
     for (int k = 0; k < j/2; k++)
         {
@@ -1136,8 +1162,49 @@ void decToBinary(int n,int bit,char tr[][32],int i)
           binaryNum[j-1-k]=t;
 
         }
+    if(n<0)
+    {
+      for(l=0;l<bit;l++)
+      {
+        if(binaryNum[l]=='0')
+          binaryNum[l]='1';
+        else
+          binaryNum[l]='0';
+      }
+      if(binaryNum[bit-1]=='0')
+        binaryNum[l]='1';
+      else
+      {
+
+      for(l=bit-1;l>=0;l--)
+      {
+        if(binaryNum[l]=='1')
+          binaryNum[l]='0';
+        else
+          break;
+      }
+      binaryNum[l]='1';
+    }
+    }
     strcat(tr[i],binaryNum);
 
+
+}
+
+
+
+int convert(char n[])
+{
+    int dec = 0, i = 0,j=0, rem;
+    int k=strlen(n);
+    while (n[j] != '\0') {
+        //rem = n % 10;
+        //n /= 10;
+        dec +=  pow(2, k-1-j) * (n[j]-48);
+        ++i;
+        ++j;
+    }
+    return dec;
 }
 
 
@@ -1146,7 +1213,7 @@ void main()
 
   FILE *fp=fopen("program.asm","r");
   FILE *vfp=fopen("vars.txt","w");
-
+  int n;
   char a[1000];
 
   while(fgets(a,1000,fp))
@@ -1157,13 +1224,13 @@ void main()
 
   char s[n][1000],t[n][1000];
   asmRead(fp,s);
+  fclose(fp);
 
   char dat[n][1000];
   int jk=-1;
 
   struct symtbl st[1000];
   struct symtbl vt[1000];
-  struct ins insset[1000];
   struct symtbl jt[1000];
   struct ins inst[1000];
 
@@ -1172,15 +1239,14 @@ void main()
   int f=-1;
   int i,j;
   int vars=0,jumps=0,labels=0;
-  int k=0;
-  char tr[n][32];
-  long long int h;
+  int k=0,h;
+  char tr[n][33];
   int ij=-1;
-
-
+  char temptok[100];
   for(i=0;i<n;i++)
   {
-    token=strtok(s[i],": \n");
+    strcpy(temptok,s[i]);
+    token=strtok(temptok,":\n");
     if(strcmp(token,".data")==0)
       {
         f=0;
@@ -1201,7 +1267,7 @@ void main()
       }
       else if(f==1)
       {
-        checkInstructionType(s[i],inst,i);
+        checkInstructionType(s[i],i);
         if(strcmp(inst[i].type,"label")==0)
         {
           continue;
@@ -1218,7 +1284,8 @@ void main()
   f=-1;
   for(i=0;i<n;i++)
   {
-    token=strtok(s[i],": \n");
+    strcpy(temptok,s[i]);
+    token=strtok(temptok,":\n");
     if(strcmp(token,".data")==0)
       {
         f=0;
@@ -1241,7 +1308,7 @@ void main()
       }
       else if(f==1)
       {
-        checkInstructionType(s[i],insset,i);
+        checkInstructionType(s[i],i);
         if(strcmp(insset[i].type,"label")==0)
         {
           strcpy(st[labels].name,token);
@@ -1273,6 +1340,7 @@ void main()
           mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,2);
           h=atoi(insset[i].op3);
+          printf("\nh=%d\n",h);
           decToBinary(h,16,tr,i);
 
         }
@@ -1291,6 +1359,7 @@ void main()
           mapreg(insset,tr,i,2);
           mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,3);
+          printf("\n.%s.",insset[i].op3);
           strcat(tr[i],"0000011100");
           strcat(tr[i],"0");
 
@@ -1666,6 +1735,20 @@ void main()
     }
   }
 
-fclose(vfp);
+  fclose(vfp);
   //write into output file
+  fp=fopen("program.o","wb");
+  for(i=0;i<n;i++)
+  {
+
+    if(strcmp(insset[i].type,"AD")&&strcmp(insset[i].type,"label"))
+    {
+      int def=convert(tr[i]);
+      fwrite(&def,sizeof(int),1,fp);
+      printf("\n %d \n",def);
+      printf("\n %s \n",tr[i]);
+    }
+  }
+  fclose(fp);
+
 }
