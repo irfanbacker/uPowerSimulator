@@ -1145,8 +1145,8 @@ void main()
 {
 
   FILE *fp=fopen("program.asm","r");
+  FILE *vfp=fopen("vars.txt","w");
 
-  int n=0;
   char a[1000];
 
   while(fgets(a,1000,fp))
@@ -1197,6 +1197,7 @@ void main()
       {
         jk++;
         strcpy(dat[jk],s[i]);
+        fprintf(vfp,"%s\n",s[i]);
       }
       else if(f==1)
       {
@@ -1665,6 +1666,6 @@ void main()
     }
   }
 
-
+fclose(vfp);
   //write into output file
 }
