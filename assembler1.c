@@ -48,23 +48,27 @@ void checkInstructionType(char s[],int i)
   if(token==NULL) ;
   else if (strcmp(token,"ld")==0)      //------------LD INSTRUCTION---------------------
   {
+    printf("\n////////////////////");
       strcpy(insset[i].mne,token);
-      o1 = strtok(NULL,"\t ");
+      o1 = strtok(NULL,"\t ,");
+      //printf("\n.%s.",o1);
       strcpy(insset[i].op1,o1);
-      o2 = strtok(NULL,"\t ,");
+      o2 = strtok(NULL,"\t ,(");
+      //printf("\n.%s.",o2);
       strcpy(insset[i].op2,o2);
-      o2 = strtok(NULL,"\t ,(\n");
+      o2 = strtok(NULL,"\t ,)\n");
+      //printf("\n.%s.",o2);
       strcpy(insset[i].op3,o2);
       strcpy(insset[i].type,"DS");
   }
   else if (strcmp(token,"add")==0) //----------------- ADD -------------------------------
   {
       strcpy(insset[i].mne,token);
-      o1 = strtok(NULL,"\t ");
+      o1 = strtok(NULL,"\t ,");
       strcpy(insset[i].op1,o1);
-      o2 = strtok(NULL,"\t ,");
+      o2 = strtok(NULL,"\t ,(");
       strcpy(insset[i].op2,o2);
-      o2 = strtok(NULL,"\t ,(\n");
+      o2 = strtok(NULL,"\t ,)\n");
       strcpy(insset[i].op3,o2);
       strcpy(insset[i].type,"XO");
   }
@@ -440,6 +444,7 @@ void checkInstructionType(char s[],int i)
       strcpy(insset[i].type,"label");
   }
 }
+
 
 
 
@@ -1115,7 +1120,7 @@ void decToBinary(int n,int bit,char tr[][33],int i)
     int j = 0,l;
     if(n==0)
     {
-      for(int g=0;g<bit;g++)
+      for(j=0;j<bit;j++)
         strcat(tr[i],"0");
     }
     else if(n>0)
@@ -1187,6 +1192,7 @@ void decToBinary(int n,int bit,char tr[][33],int i)
     }
     }
     strcat(tr[i],binaryNum);
+    printf("\n%s",tr[i]);
 
 
 }
@@ -1317,12 +1323,29 @@ void main()
         }
         else if(strcmp(insset[i].mne,"ld")==0)
         {
-          strcat(tr[i],"111010");      //opcode58        DS
+          printf("\n.%s.",tr[i]);
+          strcat(tr[i],"111010");
+        //  printf("\n.%s.",tr[i]);
           mapreg(insset,tr,i,1);
+          //printf("\n.%s.",tr[i]);
           mapreg(insset,tr,i,3);
+        //  printf("\n.%s.",tr[i]);
+        //  printf("\n.%s.",insset[i].op2);
           h=atoi(insset[i].op2);
+          //printf("\nh=%d",h);
           decToBinary(h,14,tr,i);
-          strcat(tr[i],"00");
+          //printf("\n.%s.",tr[i]);
+
+          strcat(tr[i],"0");
+          //printf("\n.%s.",tr[i]);
+
+          strcat(tr[i],"0");
+          //printf("\n.%s.",tr[i]);
+
+          tr[i][32]='\0';
+          //printf("\n.%s.",tr[i]);
+
+          //printf("\n %c  %c",tr[i][30],tr[i][31]);
         }
         else if(strcmp(insset[i].mne,"add")==0)
         {
@@ -1333,6 +1356,8 @@ void main()
           strcat(tr[i],"0");
           strcat(tr[i],"100001010");
           strcat(tr[i],"0");
+          tr[i][32]='\0';
+
         }
         else if(strcmp(insset[i].mne,"addi")==0)
         {
@@ -1342,6 +1367,7 @@ void main()
           h=atoi(insset[i].op3);
           printf("\nh=%d\n",h);
           decToBinary(h,16,tr,i);
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"addis")==0)
@@ -1351,6 +1377,7 @@ void main()
           mapreg(insset,tr,i,2);
           h=atoi(insset[i].op3);
           decToBinary(h,16,tr,i);
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"and")==0)
@@ -1362,6 +1389,7 @@ void main()
           printf("\n.%s.",insset[i].op3);
           strcat(tr[i],"0000011100");
           strcat(tr[i],"0");
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"andi")==0)
@@ -1371,6 +1399,7 @@ void main()
           mapreg(insset,tr,i,2);
           h=atoi(insset[i].op3);
           decToBinary(h,16,tr,i);
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"extsw")==0)
@@ -1381,6 +1410,8 @@ void main()
           strcat(tr[i],"00000");
           strcat(tr[i],"1111011010");
           strcat(tr[i],"0");
+          tr[i][32]='\0';
+
         }
         else if(strcmp(insset[i].mne,"nand")==0)
         {
@@ -1390,6 +1421,7 @@ void main()
           mapreg(insset,tr,i,3);
           strcat(tr[i],"0111011100");
           strcat(tr[i],"0");
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"or")==0)
@@ -1400,6 +1432,7 @@ void main()
           mapreg(insset,tr,i,3);
           strcat(tr[i],"0110111100");
           strcat(tr[i],"0");
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"ori")==0)
@@ -1409,6 +1442,7 @@ void main()
           mapreg(insset,tr,i,2);
           h=atoi(insset[i].op3);
           decToBinary(h,16,tr,i);
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"subf")==0)
@@ -1420,6 +1454,8 @@ void main()
           strcat(tr[i],"0");
           strcat(tr[i],"000101000");
           strcat(tr[i],"0");
+          tr[i][32]='\0';
+
         }
         else if(strcmp(insset[i].mne,"xor")==0)
         {
@@ -1429,6 +1465,7 @@ void main()
           mapreg(insset,tr,i,3);
           strcat(tr[i],"0100111100");
           strcat(tr[i],"0");
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"xori")==0)
@@ -1438,6 +1475,7 @@ void main()
           mapreg(insset,tr,i,2);
           h=atoi(insset[i].op3);
           decToBinary(h,16,tr,i);
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"lwz")==0)
@@ -1447,6 +1485,7 @@ void main()
           mapreg(insset,tr,i,3);
           h=atoi(insset[i].op2);
           decToBinary(h,16,tr,i);
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"std")==0)
@@ -1457,6 +1496,8 @@ void main()
           h=atoi(insset[i].op2);
           decToBinary(h,14,tr,i);
           strcat(tr[i],"00");
+          tr[i][32]='\0';
+
         }
         else if(strcmp(insset[i].mne,"stw")==0)
         {
@@ -1465,6 +1506,7 @@ void main()
           mapreg(insset,tr,i,3);
           h=atoi(insset[i].op2);
           decToBinary(h,16,tr,i);
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"stwu")==0)
@@ -1474,6 +1516,7 @@ void main()
           mapreg(insset,tr,i,3);
           h=atoi(insset[i].op2);
           decToBinary(h,16,tr,i);
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"lhz")==0)
@@ -1483,6 +1526,7 @@ void main()
           mapreg(insset,tr,i,3);
           h=atoi(insset[i].op2);
           decToBinary(h,16,tr,i);
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"lha")==0)
@@ -1492,6 +1536,7 @@ void main()
           mapreg(insset,tr,i,3);
           h=atoi(insset[i].op2);
           decToBinary(h,16,tr,i);
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"sth")==0)
@@ -1501,6 +1546,7 @@ void main()
           mapreg(insset,tr,i,3);
           h=atoi(insset[i].op2);
           decToBinary(h,16,tr,i);
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"lbz")==0)
@@ -1510,6 +1556,7 @@ void main()
           mapreg(insset,tr,i,3);
           h=atoi(insset[i].op2);
           decToBinary(h,16,tr,i);
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"stb")==0)
@@ -1519,6 +1566,7 @@ void main()
           mapreg(insset,tr,i,3);
           h=atoi(insset[i].op2);
           decToBinary(h,16,tr,i);
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"rlwinm")==0)
@@ -1533,6 +1581,8 @@ void main()
           h=atoi(insset[i].op5);
           decToBinary(h,5,tr,i);
           strcat(tr[i],"0");
+          tr[i][32]='\0';
+
         }
         else if(strcmp(insset[i].mne,"sld")==0)
         {
@@ -1542,6 +1592,7 @@ void main()
           mapreg(insset,tr,i,3);
           strcat(tr[i],"0000011011");
           strcat(tr[i],"0");
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"srd")==0)
@@ -1552,6 +1603,7 @@ void main()
           mapreg(insset,tr,i,3);
           strcat(tr[i],"1000011011");
           strcat(tr[i],"0");
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"srad")==0)
@@ -1562,6 +1614,7 @@ void main()
           mapreg(insset,tr,i,3);
           strcat(tr[i],"1100011010");
           strcat(tr[i],"0");
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"sradi")==0)
@@ -1577,6 +1630,7 @@ void main()
           strcat(tr[i],"110011101");
           decToBinary(v,1,tr,i);
           strcat(tr[i],"0");
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"b")==0)
@@ -1600,6 +1654,7 @@ void main()
           }
           strcat(tr[i],aa);
           strcat(tr[i],"0");
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"ba")==0)
@@ -1622,6 +1677,7 @@ void main()
           }
           strcat(tr[i],aa);
           strcat(tr[i],"0");
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"bl")==0)
@@ -1643,6 +1699,7 @@ void main()
             decToBinary(st[j].location,24,tr,i);
           }
           strcat(tr[i],"01");
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"bclr")==0)
@@ -1652,7 +1709,9 @@ void main()
           mapreg(insset,tr,i,2);   //BI
           strcat(tr[i],"00");   //BH
           strcat(tr[i],"0000010000");
-          strcat(tr[i],"0");    //LK
+          strcat(tr[i],"0");
+          tr[i][32]='\0';
+              //LK
         }
         else if(strcmp(insset[i].mne,"bc")==0)
         {
@@ -1674,6 +1733,8 @@ void main()
             decToBinary(st[j].location,14,tr,i);
           }
           strcat(tr[i],"00");   // AA and LK
+          tr[i][32]='\0';
+
         }
         else if(strcmp(insset[i].mne,"bca")==0)
         {
@@ -1695,6 +1756,8 @@ void main()
             decToBinary(st[j].location,14,tr,i);
           }
           strcat(tr[i],"10");   // AA and LK
+          tr[i][32]='\0';
+
         }
         else if(strcmp(insset[i].mne,"cmp")==0)
         {
@@ -1709,6 +1772,7 @@ void main()
           strcat(tr[i],"0000000000");
           //  '/'
           strcat(tr[i],"0");
+          tr[i][32]='\0';
 
         }
         else if(strcmp(insset[i].mne,"cmpi")==0)
@@ -1722,6 +1786,8 @@ void main()
           mapreg(insset,tr,i,2);
           h=atoi(insset[i].op3);
           decToBinary(h,16,tr,i);
+          tr[i][32]='\0';
+
         }
         else if(strcmp(insset[i].mne,"sc")==0)
         {
@@ -1729,6 +1795,8 @@ void main()
           strcat(tr[i],"00000000000000");
           strcat(tr[i],"0000000");       //LEV
           strcat(tr[i],"00010");
+          tr[i][32]='\0';
+
         }
 
       }
