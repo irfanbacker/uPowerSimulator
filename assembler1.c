@@ -1811,9 +1811,9 @@ void main()
 
     if(strcmp(insset[i].type,"AD")&&strcmp(insset[i].type,"label"))
     {
-      int def=convert(tr[i]);
+      unsigned int def=convert(tr[i]);
       fwrite(&def,sizeof(int),1,fp);
-      printf("\n %d \n",def);
+      printf("\n %ud \n",def);
       printf("\n %s \n",tr[i]);
     }
   }
