@@ -19,6 +19,13 @@ struct ins{
   char type[100];
 }insset[1000];
 
+struct symtbl st[1000];
+struct symtbl vt[1000];
+struct symtbl jt[1000];
+struct ins inst[1000];
+
+int vars=0,jumps=0,labels=0;
+
 
 void asmRead(FILE *f,char s[][1000])
 {
@@ -434,10 +441,167 @@ void checkInstructionType(char s[],int i)
     strcpy(insset[i].op3,o2);
     strcpy(insset[i].type,"D");
   }
+  else if(strcmp(token,"mr")==0)
+  {
+    strcpy(insset[i].mne,"addi");
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o1 = strtok(NULL,"\t\n ");
+    strcpy(insset[i].op2,o1);
+    strcpy(insset[i].op3,"0");
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"subi")==0)
+  {
+    strcpy(insset[i].mne,"addi");
+    o1 = strtok(NULL," ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,(\n");
+    char ch[]="-";
+    strcat(ch,o2);
+    strcpy(insset[i].op3,ch);
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"subis")==0)
+  {
+    strcpy(insset[i].mne,"addis");
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    char ch[]="-";
+    strcat(ch,o2);
+    strcpy(insset[i].op3,ch);
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"sub")==0)
+  {
+    strcpy(insset[i].mne,"subf");
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op3,o2);
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op2,o2);
+    strcpy(insset[i].type,"XO");
+  }
   else if (strcmp(token,"sc")==0)
   {
     strcpy(insset[i].mne,token);
     strcpy(insset[i].type,"SC");
+  }
+  else if (strcmp(token,"xnop")==0)
+  {
+    strcpy(insset[i].mne,"xori");
+    //o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,"0");
+    //o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,"0");
+    //o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,"0");
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"slwi")==0)
+  {
+    strcpy(insset[i].mne,"rlwinm");
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op2,o2);
+    o2 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op3,o2);
+    int n=atoi(o2);
+    n=31-n;
+    //o2 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op4,"0");
+    //o2 = strtok(NULL,"\t ,\n");
+    char a[3]="";
+    int ghi=0;
+    if (n<10) {
+      /* code */
+      a[0]='0';
+    }
+    while(n>0)
+    {
+      int d=n%10;
+      n=n/10;
+      a[1-ghi]=d+48;
+      ghi++;
+    }
+    strcpy(insset[i].op5,a);
+    strcpy(insset[i].type,"M");
+  }
+  else if (strcmp(token,"la")==0)
+  {
+    strcpy(insset[i].mne,"addi");
+    o1 = strtok(NULL," ,");
+    strcpy(insset[i].op1,o1);
+    o2 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op2,o2);
+    //o2 = strtok(NULL,"\t ,(\n");
+    //strcpy(insset[i].op3,o2);
+    int flag=0;
+    for(int i=0;i<vars;i++)
+    {
+      if(strcmp(vt[i].name,o2)==0)             // incomplete
+      {
+        int n=vt[i].location;
+        flag=1;
+        char a[3]="";
+        int ghi=0;
+        if (n<10) {
+          /* code */
+          a[0]='0';
+        }
+        while(n>0)
+        {
+          int d=n%10;
+          n=n/10;
+          a[1-ghi]=d+48;
+          ghi++;
+        }
+        break;
+      }
+    }
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"li")==0)
+  {
+    strcpy(insset[i].mne,"addi");
+    o1 = strtok(NULL," ,");
+    strcpy(insset[i].op1,o1);
+    //o2 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op2,"0");
+    o2 = strtok(NULL,"\t ,(\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"lis")==0)
+  {
+    strcpy(insset[i].mne,"addis");
+    o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    //o2 = strtok(NULL,"\t ,(");
+    strcpy(insset[i].op2,"0");
+    o2 = strtok(NULL,"\t ,)\n");
+    strcpy(insset[i].op3,o2);
+    strcpy(insset[i].type,"D");
+  }
+  else if (strcmp(token,"cmpd")==0)
+  {
+    strcpy(insset[i].mne,"cmp");
+    //o1 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,"0");
+    //o2 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op2,"1");\
+    o2 = strtok(NULL,"\t ,");
+    strcpy(insset[i].op3,o2);
+    o2 = strtok(NULL,"\t ,\n");
+    strcpy(insset[i].op4,o2);
+    strcpy(insset[i].type,"X");
   }
   else //------WHAT IS ENCOUNTERED IS NOT AN INSTRUCTION BUT A LABEL. UPDATE THE LABEL TABLE--------
   {                                           // no space between label name and :
@@ -1235,16 +1399,12 @@ void main()
   char dat[n][1000];
   int jk=-1;
 
-  struct symtbl st[1000];
-  struct symtbl vt[1000];
-  struct symtbl jt[1000];
-  struct ins inst[1000];
+
 
   char *token;
 
   int f=-1;
   int i,j;
-  int vars=0,jumps=0,labels=0;
   int k=0,h;
   char tr[n][33];
   int ij=-1;
@@ -1282,7 +1442,7 @@ void main()
       {
         jk++;
         strcpy(dat[jk],s[i]);
-        fprintf(vfp,"%s\n",s[i]);
+        fprintf(vfp,"%s",s[i]);
       }
       else if(f==1)
       {
@@ -1323,7 +1483,7 @@ void main()
       {
         strcpy(vt[vars].name,token);
         strcpy(insset[i].type,"label");
-        vt[vars].location = i;
+        vt[vars].location = vars;
         vars++;
       }
       else if(f==1)
@@ -1773,7 +1933,7 @@ void main()
           tr[i][32]='\0';
 
         }
-        else if(strcmp(insset[i].mne,"cmp")==0)
+        else if(strcmp(insset[i].mne,"cmp")==0)     //incomplete
         {
           strcpy(tr[i],"011111");
           h=atoi(insset[i].op1);
@@ -1781,8 +1941,8 @@ void main()
           //  '/'
           strcat(tr[i],"0");
           strcat(tr[i],"1");
-          mapreg(insset,tr,i,2);
           mapreg(insset,tr,i,3);
+          mapreg(insset,tr,i,4);
           strcat(tr[i],"0000000000");
           //  '/'
           strcat(tr[i],"0");
