@@ -29,10 +29,10 @@ void asmRead(FILE *f,char s[][1000])
   }
   int i=0,n=100;
   while(fgets(s[i++],n,f)){
-    printf("\n%s",s[i-1]);
+    //printf("\n%s",s[i-1]);
   };
 
-  printf("\nASM.......");
+  //printf("\nASM.......");
 }
 
 
@@ -48,7 +48,7 @@ void checkInstructionType(char s[],int i)
   if(token==NULL) ;
   else if (strcmp(token,"ld")==0)      //------------LD INSTRUCTION---------------------
   {
-    printf("\n////////////////////");
+    //printf("\n////////////////////");
       strcpy(insset[i].mne,token);
       o1 = strtok(NULL,"\t ,");
       //printf("\n.%s.",o1);
@@ -438,18 +438,6 @@ void checkInstructionType(char s[],int i)
   {
     strcpy(insset[i].mne,token);
     strcpy(insset[i].type,"SC");
-  }
-  else if(strcmp(token,"beq")==0)
-  {
-    strcpy(insset[i].mne,token);
-    o1=strtok(NULL,"\t ,");
-    strcpy(insset[i].op1,o1);
-    o1=strtok(NULL,"\t ,");
-    strcpy(insset[i].op2,o1);
-    o1 = strtok(NULL,"\t ,\n");
-    strcpy(insset[i].op3,o1);
-    strcpy(insset[i].type,"B");
-
   }
   else //------WHAT IS ENCOUNTERED IS NOT AN INSTRUCTION BUT A LABEL. UPDATE THE LABEL TABLE--------
   {                                           // no space between label name and :
@@ -1119,7 +1107,7 @@ char mapreg(struct ins insset[],char tr[][33],int i,int j)
       strcat(tr[i],"11111");
     }
   }
-  printf("\nmapreg on %d %s",j,tr[i]);
+//  printf("\nmapreg on %d %s",j,tr[i]);
 }
 
 // should do for -ve values
@@ -1204,7 +1192,7 @@ void decToBinary(int n,int bit,char tr[][33],int i)
     }
     }
     strcat(tr[i],binaryNum);
-  //  printf("\n%s",tr[i]);
+    //printf("\n%s",tr[i]);
 
 
 }
@@ -1334,6 +1322,7 @@ void main()
       if(f==0)
       {
         strcpy(vt[vars].name,token);
+        strcpy(insset[i].type,"label");
         vt[vars].location = i;
         vars++;
       }
@@ -1390,7 +1379,7 @@ void main()
           mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,2);
           h=atoi(insset[i].op3);
-          printf("\nh=%d\n",h);
+          //printf("\nh=%d\n",h);
           decToBinary(h,16,tr,i);
           tr[i][32]='\0';
 
@@ -1411,7 +1400,7 @@ void main()
           mapreg(insset,tr,i,2);
           mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,3);
-        //  printf("\n.%s.",insset[i].op3);
+          //printf("\n.%s.",insset[i].op3);
           strcat(tr[i],"0000011100");
           strcat(tr[i],"0");
           tr[i][32]='\0';
@@ -1838,8 +1827,8 @@ void main()
     {
       unsigned int def=convert(tr[i]);
       fwrite(&def,sizeof(int),1,fp);
-      printf("\n %ud \n",def);
-      printf("\n %s \n",tr[i]);
+      printf("%u \n",def);
+      printf("%s \n",tr[i]);
     }
   }
   fclose(fp);
