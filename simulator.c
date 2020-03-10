@@ -6,9 +6,8 @@
 #include <string.h>
 
 //--------------------------------------------------------------------------------------------------------
-
 long int r[32],srr0,lr,cr;
-
+r[0]=0;
 //--------------------------------------------------------------------------------------------------------
 
 int codeRead(FILE *f,unsigned int *s)
@@ -49,6 +48,17 @@ int signExt_16(int num) {
 int memory(int a,int b)
 {
 
+}
+
+int displaymem()
+{
+  printf("\n----------------------------------------------------------------------");
+  printf("\n r0 = %ld r1 = %ld r2 = %ld r3 = %ld r4 = %ld r5 = %ld r6 = %ld r7 = %ld",r[0],r[1],r[2],r[3],r[4],r[5],r[6],r[7]);
+  printf("\n r8 = %ld r9 = %ld r10= %ld r11= %ld r12= %ld r13= %ld r14= %ld r15= %ld",r[8],r[9],r[10],r[11],r[12],r[13],r[14],r[15]);
+  printf("\n r16= %ld r17= %ld r18= %ld r19= %ld r20= %ld r21= %ld r22= %ld r23= %ld",r[16],r[17],r[18],r[19],r[20],r[21],r[22],r[23]);
+  printf("\n r24= %ld r25= %ld r26= %ld r27= %ld r28= %ld r29= %ld r30= %ld r31= %ld",r[24],r[25],r[26],r[27],r[28],r[29],r[30],r[31]);
+  printf("\n srr0 = %ld lr = %ld cr = %ld",srr0,lr,cr);
+  printf("----------------------------------------------------------------------");
 }
 
 //---------------------------------------INSTRUCTION FUNCTIONS--------------------------------------------
@@ -165,6 +175,21 @@ void b(int li)
 }
 
 void bi(int li)
+{
+
+}
+
+void bc()
+{
+
+}
+
+void bca()
+{
+
+}
+
+void cmpi(int li,int b, int c)
 {
 
 }
@@ -410,6 +435,7 @@ void main()
       }
 
     }
+    displaymem();
   };
 
   fclose(f);
