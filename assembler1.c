@@ -439,6 +439,18 @@ void checkInstructionType(char s[],int i)
     strcpy(insset[i].mne,token);
     strcpy(insset[i].type,"SC");
   }
+  else if(strcmp(token,"beq")==0)
+  {
+    strcpy(insset[i].mne,token);
+    o1=strtok(NULL,"\t ,");
+    strcpy(insset[i].op1,o1);
+    o1=strtok(NULL,"\t ,");
+    strcpy(insset[i].op2,o1);
+    o1 = strtok(NULL,"\t ,\n");
+    strcpy(insset[i].op3,o1);
+    strcpy(insset[i].type,"B");
+
+  }
   else //------WHAT IS ENCOUNTERED IS NOT AN INSTRUCTION BUT A LABEL. UPDATE THE LABEL TABLE--------
   {                                           // no space between label name and :
       strcpy(insset[i].type,"label");
@@ -1249,6 +1261,19 @@ void main()
   char tr[n][33];
   int ij=-1;
   char temptok[100];
+
+
+
+  for(i=0;i<n;i++)
+  {
+
+  }
+
+
+
+
+
+
   for(i=0;i<n;i++)
   {
     strcpy(temptok,s[i]);
