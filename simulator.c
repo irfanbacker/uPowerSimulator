@@ -59,7 +59,7 @@ int displaymem()
   printf("\n r16= %ld r17= %ld r18= %ld r19= %ld r20= %ld r21= %ld r22= %ld r23= %ld",r[16],r[17],r[18],r[19],r[20],r[21],r[22],r[23]);
   printf("\n r24= %ld r25= %ld r26= %ld r27= %ld r28= %ld r29= %ld r30= %ld r31= %ld",r[24],r[25],r[26],r[27],r[28],r[29],r[30],r[31]);
   printf("\n srr0 = %ld lr = %ld cr = %ld",srr0,lr,cr);
-  printf("----------------------------------------------------------------------");
+  printf("\n----------------------------------------------------------------------\n");
 }
 
 //---------------------------------------INSTRUCTION FUNCTIONS--------------------------------------------
@@ -275,6 +275,7 @@ void main()
           ra=extractBits(s[i],5,11);
           rb=extractBits(s[i],5,16);
           add(rs,ra,rb);
+          printf("\n add %d,%d,%d\n",rs,ra,rb);
         }
         else if(xo==28)
         {
@@ -287,6 +288,7 @@ void main()
         rs=extractBits(s[i],5,6);
         ra=extractBits(s[i],5,11);
         addi(rs,ra,si);
+        printf("\n addi %d,%d,%d\n",rs,ra,si);
       }
       else if(opcode==15)// ADDIS
       {
@@ -301,6 +303,7 @@ void main()
         rs=extractBits(s[i],5,6);
         ra=extractBits(s[i],5,11);
         andi(rs,ra,si);
+        printf("\n add %d,%d,%d\n",ra,rs,si);
       }
       else if(opcode==24)// ORI
       {
