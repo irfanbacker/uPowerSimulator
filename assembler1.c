@@ -1204,7 +1204,7 @@ void decToBinary(int n,int bit,char tr[][33],int i)
     }
     }
     strcat(tr[i],binaryNum);
-    printf("\n%s",tr[i]);
+  //  printf("\n%s",tr[i]);
 
 
 }
@@ -1411,7 +1411,7 @@ void main()
           mapreg(insset,tr,i,2);
           mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,3);
-          printf("\n.%s.",insset[i].op3);
+        //  printf("\n.%s.",insset[i].op3);
           strcat(tr[i],"0000011100");
           strcat(tr[i],"0");
           tr[i][32]='\0';
