@@ -195,6 +195,10 @@ void cmpi(int li,int b, int c)
 
 }
 
+void sc(int lev)
+{
+  
+}
 //--------------------------------------------------------------------------------------------------------
 
 void main()
@@ -241,6 +245,8 @@ void main()
   unsigned int s[1000],opcode,xo,ra,rb,rs;
   unsigned int ds,sh,me,mb,li,aa,lk,bd;
   int si;
+  int lev;  //for SC
+
 
   fseek(f,0,SEEK_SET);
 
@@ -436,7 +442,8 @@ void main()
       }
       else if(opcode==17)// SC <------------------- NOT COMPLETED
       {
-
+        lev=extractBits(s[i],20,7);
+        sc(lev);
       }
 
     }

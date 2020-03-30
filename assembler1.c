@@ -32,6 +32,7 @@ void remove_comments(char s[][1000],int *p)
   n=*p;
   for(i=0;i<n;i++)
   {
+    printf("\n%s",s[i]);
     for(j=0;j<strlen(s[i])-1;j++)
     {
       if(s[i][j]=='/' && s[i][j+1]=='/')
@@ -105,7 +106,7 @@ void remove_comments(char s[][1000],int *p)
 void asmRead(char s[][1000])
 {
   FILE * f = fopen("program.asm","r");
-  printf("\nin asm");
+  //printf("\nin asm");
   int i=0,n=100;
   while(fgets(s[i++],n,f)){
     //printf("\n%s",s[i-1]);
@@ -1467,9 +1468,7 @@ void main()
 {
   FILE * vfp = fopen("vars.txt","w");
   FILE * fp = fopen("program.asm","r");
-  printf("\nasm");
-  printf("\nasm");
-  printf("\nasm");
+
   int n=0;
   char a[1000];
 
