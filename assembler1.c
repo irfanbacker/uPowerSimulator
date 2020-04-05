@@ -32,7 +32,7 @@ void remove_comments(char s[][1000],int *p)
   n=*p;
   for(i=0;i<n;i++)
   {
-    printf("\n%s",s[i]);
+    printf("%s",s[i]);
     for(j=0;j<strlen(s[i])-1;j++)
     {
       if(s[i][j]=='/' && s[i][j+1]=='/')
@@ -43,15 +43,15 @@ void remove_comments(char s[][1000],int *p)
       }
       else if(s[i][j]=='/' && s[i][j+1]=='*')
       {
-        k=j+2;
         int flag=0;
-        for(;s[i][k+1]!='\0';k++)
+        for(k=j+2;s[i][k+1]!='\0';k++)
         {
           if(s[i][k]=='*' && s[i][k+1]=='/')
           {
             s[i][j]='\n';
             s[i][j+1]='\0';
             flag=1;
+            break;
           }
         }
         if(flag==0)
@@ -59,7 +59,7 @@ void remove_comments(char s[][1000],int *p)
           for(int l=i+1;l<n;l++)
           {
             int f=0;
-            for(int m=0;m<strlen(s[l])-1;m++)
+            for(int m=0;s[l][m+1]!='\0';m++)
             {
               if(s[l][m]=='*' && s[l][m+1]=='/')
               {
@@ -1503,10 +1503,10 @@ void main()
   printf("\nAfter removing comments : \n");
   for(i=0;i<n;i++)
   {
-    printf("%s\n",s[i]);
+    printf("%s",s[i]);
   }
 
-
+  printf("\n");
 
 
   for(i=0;i<n;i++)
@@ -1546,7 +1546,7 @@ void main()
       }
     }
   }
-
+  int nofl=0;
   f=-1;
   for(i=0;i<n;i++)
   {
@@ -1555,12 +1555,14 @@ void main()
     if(strcmp(token,".data")==0)
       {
         f=0;
+        nofl++;
         strcpy(insset[i].type,"AD");
         strcpy(insset[i].mne,".data");
       }
     else if(strcmp(token,".text")==0)
       {
         f=1;
+        nofl++;
         strcpy(insset[i].type,"AD");
         strcpy(insset[i].mne,".text");
       }
@@ -1568,6 +1570,7 @@ void main()
     {
       if(f==0)
       {
+        nofl++;
         strcpy(vt[vars].name,token);
         strcpy(insset[i].type,"label");
         vt[vars].location = vars;
@@ -1911,7 +1914,7 @@ void main()
           }
           else
           {
-            decToBinary(st[j].location,24,tr,i);
+            decToBinary(st[j].location-j-nofl,24,tr,i);
           }
           strcat(tr[i],aa);
           strcat(tr[i],"0");
@@ -1934,7 +1937,7 @@ void main()
           }
           else
           {
-            decToBinary(st[j].location,24,tr,i);
+            decToBinary(st[j].location-j-nofl,24,tr,i);
           }
           strcat(tr[i],aa);
           strcat(tr[i],"0");
@@ -1957,7 +1960,7 @@ void main()
           }
           else
           {
-            decToBinary(st[j].location,24,tr,i);
+            decToBinary(st[j].location-j-nofl,24,tr,i);
           }
           strcat(tr[i],"01");
           tr[i][32]='\0';
@@ -1966,7 +1969,7 @@ void main()
         else if(strcmp(insset[i].mne,"bclr")==0)
         {
           strcpy(tr[i],"010011");
-          strcat(tr[i],"1z1zz");  //BO
+          strcat(tr[i],"10100");  //BO
           mapreg(insset,tr,i,2);   //BI
           strcat(tr[i],"00");   //BH
           strcat(tr[i],"0000010000");
@@ -1991,11 +1994,10 @@ void main()
           }
           else
           {
-            decToBinary(st[j].location,14,tr,i);
+            decToBinary(st[j].location-j-nofl,14,tr,i);
           }
           strcat(tr[i],"00");   // AA and LK
           tr[i][32]='\0';
-
         }
         else if(strcmp(insset[i].mne,"bca")==0)
         {
@@ -2014,7 +2016,7 @@ void main()
           }
           else
           {
-            decToBinary(st[j].location,14,tr,i);
+            decToBinary(st[j].location-j-nofl,14,tr,i);
           }
           strcat(tr[i],"10");   // AA and LK
           tr[i][32]='\0';

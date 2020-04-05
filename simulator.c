@@ -64,10 +64,9 @@ int displaymem()
 
 //---------------------------------------INSTRUCTION FUNCTIONS--------------------------------------------
 
-void add(int rs,int ra,int si)
+void add(int rs,int ra,int rb)
 {
-  long int im=signExt_16(si);
-  r[rs]=r[ra]+im;
+  r[rs]=r[ra]+r[rb];
 }
 
 void addi(int rs,int ra,int si)
@@ -83,10 +82,30 @@ void addis(int rs,int ra,int si)
   r[rs]=r[ra]+im;
 }
 
+void and(int rs,int ra,int  rb)
+{
+    r[rs]=r[ra] & r[rb]
+}
+
 void andi(int rs,int ra,int si)
 {
   long int im = (0x000000000000FFFF & si);
   r[rs] = r[ra] & im;
+}
+
+void extsw()
+{
+
+}
+
+void nand(int rs,int ra,int rb)
+{
+    r[ra] = ~(r[rs] & r[rb]);
+}
+
+void or(int rs,int ra,aint rb)
+{
+    r[ra]=r[rs] | r[rb];
 }
 
 void ori(int rs,int ra,int si)
@@ -96,6 +115,16 @@ void ori(int rs,int ra,int si)
     long int im = (0x000000000000FFFF & si);
     r[rs] = r[ra] | im;
   }
+}
+
+void subf(int rt,int ra,int rb)
+{
+    r[rt] = r[rb] - r[ra];
+}
+
+void xor(int rs,int ra,int rb)
+{
+    r[ra] = r[rs] ^ r[rb];
 }
 
 void xori(int rs,int ra,int si)
@@ -117,7 +146,15 @@ void ld(int rs,int ra,int ds)
 
 void lwz(int rs,int ra,int si)
 {
-
+  int b;
+  if(ra==0)
+    b=0;
+  else
+    b=r[ra]
+  long int im = (0x000000000000FFFF & si);
+  im = im<<2;
+  long int ea = b + signExt_16(im);
+  r[rs] = memory(ea,4);
 }
 
 void std(int rs,int ra,int si)
@@ -197,7 +234,7 @@ void cmpi(int li,int b, int c)
 
 void sc(int lev)
 {
-  
+
 }
 //--------------------------------------------------------------------------------------------------------
 
@@ -263,7 +300,7 @@ void main()
       else if(mode==2) c=n;
     }
 
-    if(c==n){
+    if(i==n){
       flag=1;
       break;
     }
@@ -283,9 +320,53 @@ void main()
           add(rs,ra,rb);
           printf("\n add %d,%d,%d\n",rs,ra,rb);
         }
-        else if(xo==28)
+        else if((xo==40)&&(!extractBits(s[i],1,21))&&(!extractBits(s[i],1,31)))//SUBF
         {
+          rs=extractBits(s[i],5,6);
+          ra=extractBits(s[i],5,11);
+          rb=extractBits(s[i],5,16);
+          subf(rs,ra,rb);
+          printf("\n subf %d,%d,%d\n",rs,ra,rb)
+        }
+        else
+        {
+          xo=extractBits(s[i],10,21);
+          if(xo==28)//AND
+          {
+            rs=extractBits(s[i],5,6);
+            ra=extractBits(s[i],5,11);
+            rb=extractBits(s[i],5,16);
+            and(rs,ra,rb);
+            printf("\n and %d,%d,%d\n",ra,rs,rb)
+          }
+          else if(xo==986)//EXTSW
+          {
 
+          }
+          else if(xo==476)//NAND
+          {
+            rs=extractBits(s[i],5,6);
+            ra=extractBits(s[i],5,11);
+            rb=extractBits(s[i],5,16);
+            nand(rs,ra,rb);
+            printf("\n nand %d,%d,%d\n",ra,rs,rb)
+          }
+          else if(xo==444)//OR
+          {
+            rs=extractBits(s[i],5,6);
+            ra=extractBits(s[i],5,11);
+            rb=extractBits(s[i],5,16);
+            or(rs,ra,rb);
+            printf("\n or %d,%d,%d\n",ra,rs,rb)
+          }
+          else if(xo==316)//XOR
+          {
+            rs=extractBits(s[i],5,6);
+            ra=extractBits(s[i],5,11);
+            rb=extractBits(s[i],5,16);
+            xor(rs,ra,rb);
+            printf("\n xor %d,%d,%d\n",ra,rs,rb)
+          }
         }
       }
       else if(opcode==14)// ADDI
