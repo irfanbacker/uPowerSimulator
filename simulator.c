@@ -4,11 +4,24 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <string.h>
-
+#include<math.h>
 //--------------------------------------------------------------------------------------------------------
 
 long int r[32],srr0,lr,cr;
 
+//--------------------------------------------------------------------------------------------------------
+
+struct datamem
+{
+  char name[100];
+  int type;
+  int size;
+  int data1[1000];
+  char data2[1000];
+  long int start_add;
+};
+
+struct datamem dmem[100];
 //--------------------------------------------------------------------------------------------------------
 
 int codeRead(FILE *f,unsigned int *s)
@@ -25,10 +38,54 @@ int codeRead(FILE *f,unsigned int *s)
   return i;
 }
 
-//Function to read variable table, label table and initialize the memory
+//Function to read variable table and initialize the memory
 void initMem()
 {
-
+  FILE * f=open("vars.txt","r");
+  int i=0;
+  char str[1000];
+  while(fread(s,1000,f))
+  {
+    char *tok = strtok(s," :");
+    strcpy(dmem[i].name,tok);
+    tok = strtok(NULL," \"");
+    if(strcmp(tok,".word")==0)
+    {
+      tok=strtok(NULL,"\n\"");
+      dmem[i].type=1;
+      if(i==0)
+      {
+        dmem[i].start_add=0x10000000;
+      }
+      else
+      {
+        dmem[i].start_add=dmem[i-1].start_add+size;
+      }
+      char * ele = strtok(tok," \"\n");
+      int j=0;
+      while(ele)
+      {
+        dmem[i].data1[j]=atoi(ele);
+        ele=strtok(NULL," \n");
+        dmem[i].size+=4;
+      }
+    }
+    else if(strcmp(tok,".asciiz")==0)
+    {
+      dmem[i].type=2;
+      if(i==0)
+      {
+        dmem[i].start_add=0x10000000;
+      }
+      else
+      {
+        dmem[i].start_add=dmem[i-1].start_add+size;
+      }
+      tok=strtok(NULL,"\n\"");
+      strcpy(dmem[i].data2,tok);
+      dmem[i].size=4*(ceil(float(strlen(tok)/4.0)));
+    }
+  }
 }
 
 int extractBits(int num, int k, int pos)
