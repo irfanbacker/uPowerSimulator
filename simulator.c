@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <string.h>
-#include<math.h>
+
 //--------------------------------------------------------------------------------------------------------
 
 long int r[32],srr0,lr,cr;
@@ -39,7 +39,7 @@ int codeRead(FILE *f,unsigned int *s)
   return i;
 }
 
-//Function to read variable table and initialize the memory
+//Function to read variable table, label table and initialize the memory
 void initMem()
 {
   FILE * f=open("vars.txt","r");
@@ -131,9 +131,10 @@ int displaymem()
 
 //---------------------------------------INSTRUCTION FUNCTIONS--------------------------------------------
 
-void add(int rs,int ra,int rb)
+void add(int rs,int ra,int si)
 {
-  r[rs]=r[ra]+r[rb];
+  long int im=signExt_16(si);
+  r[rs]=r[ra]+im;
 }
 
 void addi(int rs,int ra,int si)
@@ -149,11 +150,6 @@ void addis(int rs,int ra,int si)
   r[rs]=r[ra]+im;
 }
 
-void and(int rs,int ra,int  rb)
-{
-    r[rs]=r[ra] & r[rb]
-}
-
 void andi(int rs,int ra,int si)
 {
   long int im = (0x000000000000FFFF & si);
@@ -162,7 +158,7 @@ void andi(int rs,int ra,int si)
 
 void extsw()
 {
-  
+
 }
 
 void nand(int rs,int ra,int rb)
@@ -182,16 +178,6 @@ void ori(int rs,int ra,int si)
     long int im = (0x000000000000FFFF & si);
     r[rs] = r[ra] | im;
   }
-}
-
-void subf(int rt,int ra,int rb)
-{
-    r[rt] = r[rb] - r[ra];
-}
-
-void xor(int rs,int ra,int rb)
-{
-    r[ra] = r[rs] ^ r[rb];
 }
 
 void xori(int rs,int ra,int si)
@@ -299,10 +285,6 @@ void cmpi(int li,int b, int c)
 
 }
 
-void sc(int lev)
-{
-
-}
 //--------------------------------------------------------------------------------------------------------
 
 void main()
@@ -349,8 +331,6 @@ void main()
   unsigned int s[1000],opcode,xo,ra,rb,rs;
   unsigned int ds,sh,me,mb,li,aa,lk,bd;
   int si;
-  int lev;  //for SC
-
 
   fseek(f,0,SEEK_SET);
 
@@ -367,7 +347,7 @@ void main()
       else if(mode==2) c=n;
     }
 
-    if(i==n){
+    if(c==n){
       flag=1;
       break;
     }
@@ -387,53 +367,9 @@ void main()
           add(rs,ra,rb);
           printf("\n add %d,%d,%d\n",rs,ra,rb);
         }
-        else if((xo==40)&&(!extractBits(s[i],1,21))&&(!extractBits(s[i],1,31)))//SUBF
+        else if(xo==28)
         {
-          rs=extractBits(s[i],5,6);
-          ra=extractBits(s[i],5,11);
-          rb=extractBits(s[i],5,16);
-          subf(rs,ra,rb);
-          printf("\n subf %d,%d,%d\n",rs,ra,rb)
-        }
-        else
-        {
-          xo=extractBits(s[i],10,21);
-          if(xo==28)//AND
-          {
-            rs=extractBits(s[i],5,6);
-            ra=extractBits(s[i],5,11);
-            rb=extractBits(s[i],5,16);
-            and(rs,ra,rb);
-            printf("\n and %d,%d,%d\n",ra,rs,rb)
-          }
-          else if(xo==986)//EXTSW
-          {
 
-          }
-          else if(xo==476)//NAND
-          {
-            rs=extractBits(s[i],5,6);
-            ra=extractBits(s[i],5,11);
-            rb=extractBits(s[i],5,16);
-            nand(rs,ra,rb);
-            printf("\n nand %d,%d,%d\n",ra,rs,rb)
-          }
-          else if(xo==444)//OR
-          {
-            rs=extractBits(s[i],5,6);
-            ra=extractBits(s[i],5,11);
-            rb=extractBits(s[i],5,16);
-            or(rs,ra,rb);
-            printf("\n or %d,%d,%d\n",ra,rs,rb)
-          }
-          else if(xo==316)//XOR
-          {
-            rs=extractBits(s[i],5,6);
-            ra=extractBits(s[i],5,11);
-            rb=extractBits(s[i],5,16);
-            xor(rs,ra,rb);
-            printf("\n xor %d,%d,%d\n",ra,rs,rb)
-          }
         }
       }
       else if(opcode==14)// ADDI
@@ -590,8 +526,7 @@ void main()
       }
       else if(opcode==17)// SC <------------------- NOT COMPLETED
       {
-        lev=extractBits(s[i],20,7);
-        sc(lev);
+
       }
 
     }
