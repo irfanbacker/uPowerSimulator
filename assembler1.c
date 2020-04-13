@@ -26,92 +26,19 @@ struct ins inst[1000];
 
 int vars=0,jumps=0,labels=0;
 
-void remove_comments(char s[][1000],int *p)
-{
-  int i,j,k,n;
-  n=*p;
-  for(i=0;i<n;i++)
-  {
-    printf("%s",s[i]);
-    for(j=0;j<strlen(s[i])-1;j++)
-    {
-      if(s[i][j]=='/' && s[i][j+1]=='/')
-      {
-        s[i][j]='\n';
-        s[i][j+1]='\0';
-        break;
-      }
-      else if(s[i][j]=='/' && s[i][j+1]=='*')
-      {
-        int flag=0;
-        for(k=j+2;s[i][k+1]!='\0';k++)
-        {
-          if(s[i][k]=='*' && s[i][k+1]=='/')
-          {
-            s[i][j]='\n';
-            s[i][j+1]='\0';
-            flag=1;
-            break;
-          }
-        }
-        if(flag==0)
-        {
-          for(int l=i+1;l<n;l++)
-          {
-            int f=0;
-            for(int m=0;s[l][m+1]!='\0';m++)
-            {
-              if(s[l][m]=='*' && s[l][m+1]=='/')
-              {
-                f=1;
-                break;
-              }
-            }
-            if(f==1)
-            {
-              s[i][j]='\n';
-              s[i][j+1]='\0';
-              s[l][0]='\0';
-              break;
-            }
-            else
-            {
-              s[l][0]='\0';
-            }
-          }
-        }
-      }
-    }
-  }
-  for(i=0;i<n;i++)
-  {
-    int f=0;
-    for(j=0;s[i][j]!='\0';j++)
-    {
-      if(s[i][j]!=' ' || s[i][j]!='\n')
-        f=1;
-    }
-    if(f==0 || s[i][0]=='\0' || (s[i][0]=='\n' && s[i][1]=='\0'))
-    {
-      for(k=i;k<n-1;k++)
-      {
-        strcpy(s[k],s[k+1]);
-      }
-      n--;
-    }
-  }
-  *p=n;
-}
 
-void asmRead(char s[][1000])
+void asmRead(FILE *f,char s[][1000])
 {
-  FILE * f = fopen("program.asm","r");
-  //printf("\nin asm");
+  if(f==NULL)
+  {
+    printf("\nFile does not exist");
+    exit(1);
+  }
   int i=0,n=100;
   while(fgets(s[i++],n,f)){
     //printf("\n%s",s[i-1]);
   };
-  fclose(f);
+
   //printf("\nASM.......");
 }
 
@@ -564,8 +491,6 @@ void checkInstructionType(char s[],int i)
   else if (strcmp(token,"sc")==0)
   {
     strcpy(insset[i].mne,token);
-    o1 = strtok(NULL,"\t ,");
-    strcpy(insset[i].op1,o1);
     strcpy(insset[i].type,"SC");
   }
   else if (strcmp(token,"xnop")==0)
@@ -635,7 +560,7 @@ void checkInstructionType(char s[],int i)
         {
           int d=n%10;
           n=n/10;
-          a[2-ghi]=d+48;
+          a[1-ghi]=d+48;
           ghi++;
         }
         break;
@@ -669,25 +594,14 @@ void checkInstructionType(char s[],int i)
   {
     strcpy(insset[i].mne,"cmp");
     //o1 = strtok(NULL,"\t ,");
-    strcpy(insset[i].op1,"7");
+    strcpy(insset[i].op1,"0");
     //o2 = strtok(NULL,"\t ,");
-    strcpy(insset[i].op2,"1");
+    strcpy(insset[i].op2,"1");\
     o2 = strtok(NULL,"\t ,");
     strcpy(insset[i].op3,o2);
     o2 = strtok(NULL,"\t ,\n");
     strcpy(insset[i].op4,o2);
     strcpy(insset[i].type,"X");
-  }
-  else if (strcmp(token,"cmpdi")==0)
-  {
-    strcpy(insset[i].mne,"cmpi");
-    o1 = strtok(NULL,"\t ,");
-    strcpy(insset[i].op1,"7");
-    o2 = strtok(NULL,"\t ,(");
-    strcpy(insset[i].op2,o1);
-    //o2 = strtok(NULL,"\t ,)\n");
-    strcpy(insset[i].op3,o2);
-    strcpy(insset[i].type,"D");
   }
   else //------WHAT IS ENCOUNTERED IS NOT AN INSTRUCTION BUT A LABEL. UPDATE THE LABEL TABLE--------
   {                                           // no space between label name and :
@@ -1466,22 +1380,21 @@ int convert(char n[])
 
 void main()
 {
-  FILE * vfp = fopen("vars.txt","w");
-  FILE * fp = fopen("program.asm","r");
 
-  int n=0;
+  FILE *fp=fopen("program.asm","r");
+  FILE *vfp=fopen("vars.txt","w");
+  int n;
   char a[1000];
 
   while(fgets(a,1000,fp))
     n++;
 
   fseek(fp,0,SEEK_SET);
-  fclose(fp);
+
 
   char s[n][1000],t[n][1000];
-
-  asmRead(s);
-
+  asmRead(fp,s);
+  fclose(fp);
 
   char dat[n][1000];
   int jk=-1;
@@ -1498,15 +1411,15 @@ void main()
   char temptok[100];
 
 
-  remove_comments(s,&n);
 
-  printf("\nAfter removing comments : \n");
   for(i=0;i<n;i++)
   {
-    printf("%s",s[i]);
+
   }
 
-  printf("\n");
+
+
+
 
 
   for(i=0;i<n;i++)
@@ -1546,7 +1459,7 @@ void main()
       }
     }
   }
-  int nofl=0;
+
   f=-1;
   for(i=0;i<n;i++)
   {
@@ -1555,14 +1468,12 @@ void main()
     if(strcmp(token,".data")==0)
       {
         f=0;
-        nofl++;
         strcpy(insset[i].type,"AD");
         strcpy(insset[i].mne,".data");
       }
     else if(strcmp(token,".text")==0)
       {
         f=1;
-        nofl++;
         strcpy(insset[i].type,"AD");
         strcpy(insset[i].mne,".text");
       }
@@ -1570,7 +1481,6 @@ void main()
     {
       if(f==0)
       {
-        nofl++;
         strcpy(vt[vars].name,token);
         strcpy(insset[i].type,"label");
         vt[vars].location = vars;
@@ -1914,7 +1824,7 @@ void main()
           }
           else
           {
-            decToBinary(st[j].location-j-nofl,24,tr,i);
+            decToBinary(st[j].location,24,tr,i);
           }
           strcat(tr[i],aa);
           strcat(tr[i],"0");
@@ -1937,7 +1847,7 @@ void main()
           }
           else
           {
-            decToBinary(st[j].location-j-nofl,24,tr,i);
+            decToBinary(st[j].location,24,tr,i);
           }
           strcat(tr[i],aa);
           strcat(tr[i],"0");
@@ -1960,7 +1870,7 @@ void main()
           }
           else
           {
-            decToBinary(st[j].location-j-nofl,24,tr,i);
+            decToBinary(st[j].location,24,tr,i);
           }
           strcat(tr[i],"01");
           tr[i][32]='\0';
@@ -1969,7 +1879,7 @@ void main()
         else if(strcmp(insset[i].mne,"bclr")==0)
         {
           strcpy(tr[i],"010011");
-          strcat(tr[i],"10100");  //BO
+          strcat(tr[i],"1z1zz");  //BO
           mapreg(insset,tr,i,2);   //BI
           strcat(tr[i],"00");   //BH
           strcat(tr[i],"0000010000");
@@ -1994,10 +1904,11 @@ void main()
           }
           else
           {
-            decToBinary(st[j].location-j-nofl,14,tr,i);
+            decToBinary(st[j].location,14,tr,i);
           }
           strcat(tr[i],"00");   // AA and LK
           tr[i][32]='\0';
+
         }
         else if(strcmp(insset[i].mne,"bca")==0)
         {
@@ -2016,7 +1927,7 @@ void main()
           }
           else
           {
-            decToBinary(st[j].location-j-nofl,14,tr,i);
+            decToBinary(st[j].location,14,tr,i);
           }
           strcat(tr[i],"10");   // AA and LK
           tr[i][32]='\0';
@@ -2056,9 +1967,7 @@ void main()
         {
           strcpy(tr[i],"010001");
           strcat(tr[i],"00000000000000");
-          //strcat(tr[i],insset[i].op1);       //LEV
-          h=atoi(insset[i].op1);
-          decToBinary(h,7,tr,i);
+          strcat(tr[i],"0000000");       //LEV
           strcat(tr[i],"00010");
           tr[i][32]='\0';
 
