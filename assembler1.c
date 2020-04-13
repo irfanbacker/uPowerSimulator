@@ -1588,7 +1588,7 @@ void main()
         else if(strcmp(insset[i].mne,"ld")==0)
         {
           printf("\n.%s.",tr[i]);
-          strcat(tr[i],"111010")
+          strcat(tr[i],"111010");
           mapreg(insset,tr,i,1);
           mapreg(insset,tr,i,3);
           h=atoi(insset[i].op2);

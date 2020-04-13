@@ -33,7 +33,7 @@ int codeRead(FILE *f,unsigned int *s)
     exit(1);
   }
   int i=0;
-  while(fread(s+(sizeof(int)*i),sizeof(int),1,f)){
+  while(fread(s+i,sizeof(int),1,f)){
     i++;
   };
   return i;
@@ -42,12 +42,12 @@ int codeRead(FILE *f,unsigned int *s)
 //Function to read variable table and initialize the memory
 void initMem()
 {
-  FILE * f=open("vars.txt","r");
+  FILE *f=fopen("vars.txt","r");
   int i=0;
   char str[1000];
-  while(fread(s,1000,f))
+  while(fread(str,1000,1,f))
   {
-    char *tok = strtok(s," :");
+    char *tok = strtok(str," :");
     strcpy(dmem[i].name,tok);
     tok = strtok(NULL," \"");
     if(strcmp(tok,".word")==0)
@@ -60,7 +60,7 @@ void initMem()
       }
       else
       {
-        dmem[i].start_add=dmem[i-1].start_add+size;
+        dmem[i].start_add=dmem[i-1].start_add+dmem[i-1].size;
       }
       char * ele = strtok(tok," \"\n");
       int j=0;
@@ -80,11 +80,11 @@ void initMem()
       }
       else
       {
-        dmem[i].start_add=dmem[i-1].start_add+size;
+        dmem[i].start_add=dmem[i-1].start_add+dmem[i-1].size;
       }
       tok=strtok(NULL,"\n\"");
       strcpy(dmem[i].data2,tok);
-      dmem[i].size=4*(ceil(float(strlen(tok)/4.0)));
+      dmem[i].size=4*(ceil((float)(strlen(tok)/4.0)));
     }
     i++;
   }
@@ -110,9 +110,9 @@ int memory(int rs,int a,int b)
 {
   for(int i=0;i<=ndmem;i++)
   {
-    if(dmem[i].start_ad<=a && dmem[i].start_ad+dmem[i].size>=a+b)
+    if(dmem[i].start_add<=a && dmem[i].start_add+dmem[i].size>=a+b)
     {
-      r[rs] = dmem.data1[a+b-dmem[i].start_ad];
+      r[rs] = dmem[i].data1[a+b-dmem[i].start_add];
       break;
     }
   }
@@ -151,7 +151,7 @@ void addis(int rs,int ra,int si)
 
 void and(int rs,int ra,int  rb)
 {
-    r[rs]=r[ra] & r[rb]
+    r[rs]=r[ra] & r[rb];
 }
 
 void andi(int rs,int ra,int si)
@@ -162,7 +162,7 @@ void andi(int rs,int ra,int si)
 
 void extsw()
 {
-  
+
 }
 
 void nand(int rs,int ra,int rb)
@@ -170,7 +170,7 @@ void nand(int rs,int ra,int rb)
     r[ra] = ~(r[rs] & r[rb]);
 }
 
-void or(int rs,int ra,aint rb)
+void or(int rs,int ra,int rb)
 {
     r[ra]=r[rs] | r[rb];
 }
@@ -217,7 +217,7 @@ void lwz(int rs,int ra,int si)
   if(ra==0)
     b=0;
   else
-    b=r[ra]
+    b=r[ra];
   long int im = (0x000000000000FFFF & si);
   im = im<<2;
   long int ea = b + signExt_16(im);
@@ -359,17 +359,17 @@ void main()
   flag=0;
   while(flag==0)
   {
+    if(i==n){
+      flag=1;
+      break;
+    }
+
     if(c==i)
     {
       printf("\n Select mode 1.) Step 2.) Full : ");
       scanf("%d",&mode);
       if(mode==1) c++;
       else if(mode==2) c=n;
-    }
-
-    if(i==n){
-      flag=1;
-      break;
     }
 
     for(;i<c;i++)
@@ -393,7 +393,7 @@ void main()
           ra=extractBits(s[i],5,11);
           rb=extractBits(s[i],5,16);
           subf(rs,ra,rb);
-          printf("\n subf %d,%d,%d\n",rs,ra,rb)
+          printf("\n subf %d,%d,%d\n",rs,ra,rb);
         }
         else
         {
@@ -404,7 +404,7 @@ void main()
             ra=extractBits(s[i],5,11);
             rb=extractBits(s[i],5,16);
             and(rs,ra,rb);
-            printf("\n and %d,%d,%d\n",ra,rs,rb)
+            printf("\n and %d,%d,%d\n",ra,rs,rb);
           }
           else if(xo==986)//EXTSW
           {
@@ -416,7 +416,7 @@ void main()
             ra=extractBits(s[i],5,11);
             rb=extractBits(s[i],5,16);
             nand(rs,ra,rb);
-            printf("\n nand %d,%d,%d\n",ra,rs,rb)
+            printf("\n nand %d,%d,%d\n",ra,rs,rb);
           }
           else if(xo==444)//OR
           {
@@ -424,7 +424,7 @@ void main()
             ra=extractBits(s[i],5,11);
             rb=extractBits(s[i],5,16);
             or(rs,ra,rb);
-            printf("\n or %d,%d,%d\n",ra,rs,rb)
+            printf("\n or %d,%d,%d\n",ra,rs,rb);
           }
           else if(xo==316)//XOR
           {
@@ -432,7 +432,7 @@ void main()
             ra=extractBits(s[i],5,11);
             rb=extractBits(s[i],5,16);
             xor(rs,ra,rb);
-            printf("\n xor %d,%d,%d\n",ra,rs,rb)
+            printf("\n xor %d,%d,%d\n",ra,rs,rb);
           }
         }
       }
