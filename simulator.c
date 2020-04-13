@@ -22,6 +22,7 @@ struct datamem
 };
 
 struct datamem dmem[100];
+int ndmem=0;
 //--------------------------------------------------------------------------------------------------------
 
 int codeRead(FILE *f,unsigned int *s)
@@ -85,7 +86,9 @@ void initMem()
       strcpy(dmem[i].data2,tok);
       dmem[i].size=4*(ceil(float(strlen(tok)/4.0)));
     }
+    i++;
   }
+  ndmem=i;
 }
 
 int extractBits(int num, int k, int pos)
@@ -103,9 +106,16 @@ int signExt_16(int num) {
     return value;
 }
 
-int memory(int a,int b)
+int memory(int rs,int a,int b)
 {
-
+  for(int i=0;i<=ndmem;i++)
+  {
+    if(dmem[i].start_ad<=a && dmem[i].start_ad+dmem[i].size>=a+b)
+    {
+      r[rs] = dmem.data1[a+b-dmem[i].start_ad];
+      break;
+    }
+  }
 }
 
 int displaymem()
@@ -152,7 +162,7 @@ void andi(int rs,int ra,int si)
 
 void extsw()
 {
-
+  
 }
 
 void nand(int rs,int ra,int rb)
@@ -198,7 +208,7 @@ void ld(int rs,int ra,int ds)
   long int dsi = (0x000000000000FFFF & ds);
   dsi = dsi<<2;
   long int ea = signExt_16(dsi) + r[ra];
-  r[rs] = memory(ea,8);  // <--------------------------- MEMORY NOT STARTED
+  memory(rs,ea,8);  // <--------------------------- MEMORY NOT STARTED
 }
 
 void lwz(int rs,int ra,int si)
@@ -211,7 +221,7 @@ void lwz(int rs,int ra,int si)
   long int im = (0x000000000000FFFF & si);
   im = im<<2;
   long int ea = b + signExt_16(im);
-  r[rs] = memory(ea,4);
+  memory(rs,ea,4);
 }
 
 void std(int rs,int ra,int si)

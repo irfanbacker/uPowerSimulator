@@ -1588,28 +1588,14 @@ void main()
         else if(strcmp(insset[i].mne,"ld")==0)
         {
           printf("\n.%s.",tr[i]);
-          strcat(tr[i],"111010");
-        //  printf("\n.%s.",tr[i]);
+          strcat(tr[i],"111010")
           mapreg(insset,tr,i,1);
-          //printf("\n.%s.",tr[i]);
           mapreg(insset,tr,i,3);
-        //  printf("\n.%s.",tr[i]);
-        //  printf("\n.%s.",insset[i].op2);
           h=atoi(insset[i].op2);
-          //printf("\nh=%d",h);
           decToBinary(h,14,tr,i);
-          //printf("\n.%s.",tr[i]);
-
           strcat(tr[i],"0");
-          //printf("\n.%s.",tr[i]);
-
           strcat(tr[i],"0");
-          //printf("\n.%s.",tr[i]);
-
           tr[i][32]='\0';
-          //printf("\n.%s.",tr[i]);
-
-          //printf("\n %c  %c",tr[i][30],tr[i][31]);
         }
         else if(strcmp(insset[i].mne,"add")==0)
         {
