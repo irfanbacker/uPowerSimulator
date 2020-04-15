@@ -97,11 +97,11 @@ int extractBits(int num, int k, int pos)
     return (((1 << k) - 1) & (num >> (p)));
 }
 
-int signExt_16(int num) {
+long long int signExt_16(int num,int n) {     // n is number of bits of input
     long int value = (0x000000000000FFFF & num);
-    long int mask = 0x0000000000008000;
+    long int mask = 1 << (n-1);
     if (mask & num) {
-        value += 0xFFFFFFFFFFFF0000;
+        value += ((1 << (64-n)) - 1) << n;
     }
     return value;
 }
@@ -138,13 +138,13 @@ void add(int rs,int ra,int rb)
 
 void addi(int rs,int ra,int si)
 {
-  long int im=signExt_16(si);
+  long int im=signExt_16(si,16);
   r[rs]=r[ra]+im;
 }
 
 void addis(int rs,int ra,int si)
 {
-  long int im=signExt_16(si);
+  long int im=signExt_16(si,16);
   im=im<<16;
   r[rs]=r[ra]+im;
 }
@@ -160,9 +160,16 @@ void andi(int rs,int ra,int si)
   r[rs] = r[ra] & im;
 }
 
-void extsw()
+void extsw(int rs,int ra)
 {
-
+  if(extractBits(r[rs],1,32))
+  {
+    r[ra] = extractBits(r[rs],31,33) - pow(2,31);
+  }
+  else
+  {
+    r[ra] = r[rs];
+  }
 }
 
 void nand(int rs,int ra,int rb)
@@ -207,7 +214,7 @@ void ld(int rs,int ra,int ds)
 {
   long int dsi = (0x000000000000FFFF & ds);
   dsi = dsi<<2;
-  long int ea = signExt_16(dsi) + r[ra];
+  long int ea = signExt_16(dsi,14) + r[ra];
   memory(rs,ea,8);  // <--------------------------- MEMORY NOT STARTED
 }
 
@@ -220,48 +227,112 @@ void lwz(int rs,int ra,int si)
     b=r[ra];
   long int im = (0x000000000000FFFF & si);
   im = im<<2;
-  long int ea = b + signExt_16(im);
+  long int ea = b + signExt_16(im,16);
   memory(rs,ea,4);
 }
 
 void std(int rs,int ra,int si)
 {
-
+  int b;
+  if(ra==0)
+    b=0;
+  else
+    b=r[ra];
+  long int im = (0x000000000000FFFF & si);
+  im = im<<2;
+  long int ea = b + signExt_16(im,14);
+  store(rs,ea,8);  // <------------------------------STORE NOT STARTED
 }
 
 void stw(int rs,int ra,int si)
 {
-
+  int b;
+  if(ra==0)
+    b=0;
+  else
+    b=r[ra];
+  long int im = (0x000000000000FFFF & si);
+  im = im<<2;
+  long int ea = b + signExt_16(im,16);
+  store(rs,ea,4);
 }
 
 void stwu(int rs,int ra,int si)
 {
-
+  int b;
+  if(ra==0)
+    b=0;
+  else
+    b=r[ra];
+  long int im = (0x000000000000FFFF & si);
+  im = im<<2;
+  long int ea = b + signExt_16(im,16);
+  store(rs,ea,4);
 }
 
 void lhz(int rs,int ra,int si)
 {
-
+  int b;
+  if(ra==0)
+    b=0;
+  else
+    b=r[ra];
+  long int im = (0x000000000000FFFF & si);
+  im = im<<2;
+  long int ea = b + signExt_16(im,16);
+  memory(rs,ea,2);
 }
 
 void lha(int rs,int ra,int si)
 {
-
+  int b;
+  if(ra==0)
+    b=0;
+  else
+    b=r[ra];
+  long int im = (0x000000000000FFFF & si);
+  im = im<<2;
+  long int ea = b + signExt_16(im,16);
+  memory(rs,ea,2);
 }
 
 void sth(int rs,int ra,int si)
 {
-
+  int b;
+  if(ra==0)
+    b=0;
+  else
+    b=r[ra];
+  long int im = (0x000000000000FFFF & si);
+  im = im<<2;
+  long int ea = b + signExt_16(im,16);
+  store(rs,ea,2);
 }
 
 void lbz(int rs,int ra,int si)
 {
-
+  int b;
+  if(ra==0)
+    b=0;
+  else
+    b=r[ra];
+  long int im = (0x000000000000FFFF & si);
+  im = im<<2;
+  long int ea = b + signExt_16(im,16);
+  memory(rs,ea,1);
 }
 
 void stb(int rs,int ra,int si)
 {
-
+  int b;
+  if(ra==0)
+    b=0;
+  else
+    b=r[ra];
+  long int im = (0x000000000000FFFF & si);
+  im = im<<2;
+  long int ea = b + signExt_16(im,16);
+  store(rs,ea,1);
 }
 
 void rlwinm(int rs,int ra,int sh,int mb, int me)
@@ -290,6 +361,11 @@ void bc()
 }
 
 void bca()
+{
+
+}
+
+void cmp()
 {
 
 }
@@ -408,7 +484,10 @@ void main()
           }
           else if(xo==986)//EXTSW
           {
-
+            rs=extractBits(s[i],5,6);
+            ra=extractBits(s[i],5,11);
+            extsw(rs,ra);
+            printf("\n extsw %d,%d\n",ra,rs);
           }
           else if(xo==476)//NAND
           {
@@ -433,6 +512,10 @@ void main()
             rb=extractBits(s[i],5,16);
             xor(rs,ra,rb);
             printf("\n xor %d,%d,%d\n",ra,rs,rb);
+          }
+          else if(xo==0)//CMP
+          {
+
           }
         }
       }
