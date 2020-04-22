@@ -8,7 +8,7 @@
 //--------------------------------------------------------------------------------------------------------
 
 long int r[32],srr0,lr,cr;
-
+long int stack[10000];
 //--------------------------------------------------------------------------------------------------------
 
 struct datamem
@@ -203,7 +203,9 @@ void xor(int rs,int ra,int rb)
 
 void xori(int rs,int ra,int si)
 {
-  if(!((!rs)&&(!ra)&&(!si)))
+  if(!((!rs)&&(!ra)&&(!si)))n: .word 10
+
+a: .asciiz "hello"
   {
     long int im = (0x000000000000FFFF & si);
     r[rs] = r[ra] ^ im;
@@ -340,17 +342,51 @@ void rlwinm(int rs,int ra,int sh,int mb, int me)
 
 }
 
-void ba(int li)
+void sld(int rs,int ra,int rb)
+{
+  int n = extractBits(r[rb],6,58);
+  r[ra] = (r[rs] << n) & (0xFFFFFFFFFFFFFFFF);
+  long int mask;
+  if(extractBits(r[rb],1,57))
+    mask=0x0000000000000000;
+  else
+    mask = ((1 << (64-n))-1) << n;
+  r[ra] = r[ra] & mask;
+}
+
+void srd(int rs,int ra,int rb)
+{
+  int n = extractBits(r[rb],6,58);
+  r[ra] = (r[rs] << n) & (0xFFFFFFFFFFFFFFFF);
+  long int mask;
+  if(extractBits(r[rb],1,57))
+    mask=0x0000000000000000;
+  else
+    mask = ((1 << (64-n))-1) << n;
+  r[ra] = r[ra] & mask;
+}
+
+void srad()
 {
 
 }
 
-void b(int li)
+void sradi()
 {
 
 }
 
-void bi(int li)
+int ba(int li)
+{
+
+}
+
+int b(int li)
+{
+
+}
+
+int bl(int li)
 {
 
 }
@@ -365,14 +401,31 @@ void bca()
 
 }
 
-void cmp()
+void bclr()
 {
 
 }
 
-void cmpi(int li,int b, int c)
+void cmp(int a,int b)
 {
+  if(r[a]==r[b])
+    cr=1;
+  else if(r[a]<r[b])
+    cr=2;
+  else
+    cr=4;
+}
 
+void cmpi(int b, int li)
+{
+  long int im = (0x000000000000FFFF & li);
+  im = signExt_16(im,16);
+  if(r[b]==im)
+    cr=1;
+  else if(r[b]<im)
+    cr=2;
+  else
+    cr=4;
 }
 
 void sc(int lev)
@@ -515,7 +568,41 @@ void main()
           }
           else if(xo==0)//CMP
           {
-
+            ra=extractBits(s[i],5,11);
+            rb=extractBits(s[i],5,16);
+            cmp(ra,rb);
+          }
+          else if(x0==27)//SLD
+          {
+            rs=extractBits(s[i],5,6);
+            ra=extractBits(s[i],5,11);
+            rb=extractBits(s[i],5,16);
+            sld(rs,ra,rb);
+          }
+          else if(xo==539)//SRD
+          {
+            rs=extractBits(s[i],5,6);
+            ra=extractBits(s[i],5,11);
+            rb=extractBits(s[i],5,16);
+            srd(rs,ra,rb);
+          }
+          else if(xo==794)//SRAD
+          {
+            rs=extractBits(s[i],5,6);
+            ra=extractBits(s[i],5,11);
+            rb=extractBits(s[i],5,16);
+            srad(rs,ra,rb);
+          }
+          else
+          {
+            xo=extractBits(s[i],9,21);
+            if(xo==413)//SRADI
+            {
+              rs=extractBits(s[i],5,6);
+              ra=extractBits(s[i],5,11);
+              rb=extractBits(s[i],5,16);
+              sradi(rs,ra,rb);
+            }
           }
         }
       }
@@ -650,10 +737,14 @@ void main()
         li=extractBits(s[i],24,6);
         if(lk==0)
         {
-          if(aa) ba(li);// BA
-          else b(li);// B
+          if(aa) i=li-1;// BA
+          else i=i+li-1;// B
         }
-        else bi(li);// BI
+        else //BL
+        {
+          lr=i+1;
+          i=li-1;
+        }
       }
       else if((opcode==38)&&(!extractBits(s[i],1,31)))
       {
@@ -669,12 +760,16 @@ void main()
         si=extractBits(s[i],16,16);
         rs=extractBits(s[i],5,6);
         ra=extractBits(s[i],5,11);
-        cmpi(rs,ra,si);
+        cmpi(ra,si);
       }
       else if(opcode==17)// SC <------------------- NOT COMPLETED
       {
         lev=extractBits(s[i],20,7);
         sc(lev);
+      }
+      else if(opcode==19)
+      {
+
       }
 
     }
