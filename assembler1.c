@@ -1954,7 +1954,7 @@ void main()
         }
         else if(strcmp(insset[i].mne,"bclr")==0)
         {
-          strcpy(tr[i],"010011");
+          strcpy(tr[i],"010100");
           strcat(tr[i],"10100");  //BO
           mapreg(insset,tr,i,2);   //BI
           strcat(tr[i],"00");   //BH

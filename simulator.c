@@ -10,6 +10,7 @@
 long int r[32],srr0,lr,cr;
 long int stack[10000];
 //--------------------------------------------------------------------------------------------------------
+int mem[68652367868]={0};
 
 struct datamem
 {
@@ -23,6 +24,7 @@ struct datamem
 
 struct datamem dmem[100];
 int ndmem=0;
+int nmem=0;
 //--------------------------------------------------------------------------------------------------------
 
 int codeRead(FILE *f,unsigned int *s)
@@ -39,11 +41,19 @@ int codeRead(FILE *f,unsigned int *s)
   return i;
 }
 
+//Function to initialize values of registers
+void initReg()
+{
+  r[0]=0;
+  r[28]=2*16*16*16;  //gp
+  r[29]=68652367866; //sp
+}
+
 //Function to read variable table and initialize the memory
 void initMem()
 {
   FILE *f=fopen("vars.txt","r");
-  int i=0;
+  int i=0,j=0;
   char str[1000];
   while(fread(str,1000,1,f))
   {
@@ -67,9 +77,48 @@ void initMem()
       while(ele)
       {
         dmem[i].data1[j]=atoi(ele);
+        mem[nmem++]=atoi(ele);
         ele=strtok(NULL," \n");
         dmem[i].size+=4;
       }
+    }
+    else if(strcmp(tok,".doubleword")==0)
+    {
+      tok=strtok(NULL,"\n\"");
+      dmem[i].type=1;
+      if(i==0)
+      {
+        dmem[i].start_add=0x10000000;
+      }
+      else
+      {
+        dmem[i].start_add=dmem[i-1].start_add+dmem[i-1].size;
+      }
+      char * ele = strtok(tok," \"\n");
+      int j=0;
+      while(ele)
+      {
+        dmem[i].data1[j]=atoi(ele);
+        mem[nmem++]=atoi(ele)>>32;
+        mem[nmem++]=atoi(ele)&(0xFFFFFFFF);
+        ele=strtok(NULL," \n");
+        dmem[i].size+=8;
+      }
+    }
+    else if(strcmp(tok,".space")=0)
+    {
+      tok=strtok(NULL," ");
+      int s=atoi(tok);
+      if(i==0)
+      {
+        dmem[i].start_add=0x10000000;
+      }
+      else
+      {
+        dmem[i].start_add=dmem[i-1].start_add+dmem[i-1].size;
+      }
+      dmem[i].size=4*(ceil((float)(strlen(tok)/4.0)));
+      nmem+=dmem[i].size/4;
     }
     else if(strcmp(tok,".asciiz")==0)
     {
@@ -105,7 +154,7 @@ long long int signExt_16(int num,int n) {     // n is number of bits of input
     }
     return value;
 }
-
+/*
 int memory(int rs,int a,int b)
 {
   for(int i=0;i<=ndmem;i++)
@@ -117,6 +166,7 @@ int memory(int rs,int a,int b)
     }
   }
 }
+*/
 
 int displaymem()
 {
@@ -129,6 +179,49 @@ int displaymem()
   printf("\n----------------------------------------------------------------------\n");
 }
 
+
+
+void memory(int rs,long int ea,int b,int p)
+{
+  if(b==4)
+    r[rs]=mem[ea];
+  else if(b==8)
+  {
+    if(!extractBits(mem[ea],1,0))
+      r[rs]=mem[ea]<<32 + mem[ea+1];
+    else
+      r[rs]=mem[ea]<<32 - mem[ea+1];
+  }
+  else if(b==2)
+  {
+    r[rs]=(0xFFFF0000>>p)&(mem[ea]);
+  }
+  else if(b==1)
+  {
+    r[rs]=(0xF0000000>>p)&(mem[ea]);
+  }
+}
+
+void store(int rs,long int ea,int b,int p)
+{
+  if(b==1)
+  {
+    mem[ea]=(mem[ea]&((1<<32 - 1)-(0xFF<<(24-p))))|((r[rs]&(0xFF))<<(24-p));
+  }
+  else if(b==2)
+  {
+    mem[ea]=(mem[ea]&((1<<32 - 1)-(0xFFFF<<(16-p))))|((r[rs]&(0xFFFF))<<(16-p));
+  }
+  else if(b==4)
+  {
+    mem[ea]=r[rs];
+  }
+  else if(b==8)
+  {
+    mem[ea]=r[rs]>>32;
+    mem[ea+1]=r[rs]&(0xFFFFFFFF);
+  }
+}
 //---------------------------------------INSTRUCTION FUNCTIONS--------------------------------------------
 
 void add(int rs,int ra,int rb)
@@ -203,9 +296,7 @@ void xor(int rs,int ra,int rb)
 
 void xori(int rs,int ra,int si)
 {
-  if(!((!rs)&&(!ra)&&(!si)))n: .word 10
-
-a: .asciiz "hello"
+  if(!((!rs)&&(!ra)&&(!si)))
   {
     long int im = (0x000000000000FFFF & si);
     r[rs] = r[ra] ^ im;
@@ -357,23 +448,30 @@ void sld(int rs,int ra,int rb)
 void srd(int rs,int ra,int rb)
 {
   int n = extractBits(r[rb],6,58);
-  r[ra] = (r[rs] << n) & (0xFFFFFFFFFFFFFFFF);
+  r[ra] = (r[rs] >> n) & ((1 << (64-n))-1);
   long int mask;
   if(extractBits(r[rb],1,57))
-    mask=0x0000000000000000;
+    mask = 0x0000000000000000;
   else
-    mask = ((1 << (64-n))-1) << n;
+    mask = ((1 << (64-n))-1);
   r[ra] = r[ra] & mask;
 }
 
-void srad()
+void srad(int rs,int ra,int rb)
 {
-
+  int n = extractBits(r[rb],6,58);
+  r[ra] = (r[rs] >> n) & (0xFFFFFFFFFFFFFFFF);
+  long int mask;
+  if(extractBits(r[rb],1,57))
+    mask = 0x0000000000000000;
+  else
+    mask = 0xFFFFFFFFFFFFFFFF;
+  r[ra] = r[ra] & mask;
 }
 
-void sradi()
+void sradi(int rs,int ra,int sh)
 {
-
+  r[ra] = (r[rs] >> sh) & (0xFFFFFFFFFFFFFFFF);
 }
 
 int ba(int li)
@@ -746,14 +844,20 @@ void main()
           i=li-1;
         }
       }
-      else if((opcode==38)&&(!extractBits(s[i],1,31)))
+      else if((opcode==19)&&(!extractBits(s[i],1,31)))
       {
         aa=extractBits(s[i],1,30);
         rs=extractBits(s[i],5,6);
         ra=extractBits(s[i],5,11);
         bd=extractBits(s[i],14,16);
-        if(!aa) bc(); // BC  <------------------- NOT COMPLETED
-        else bca();// BCA  <------------------- NOT COMPLETED
+        if(!aa)
+        {
+          bc();
+        } // BC  <------------------- NOT COMPLETED
+        else
+        {
+          bca();
+        } // BCA  <------------------- NOT COMPLETED
       }
       else if(opcode==11)// CMPI
       {
@@ -767,7 +871,7 @@ void main()
         lev=extractBits(s[i],20,7);
         sc(lev);
       }
-      else if(opcode==19)
+      else if(opcode==20)//BCLR
       {
 
       }
