@@ -628,7 +628,11 @@ void main()
   {
     waitpid(pid,0,0);
   }
-
+  int beg;
+  FILE *vfp=fopen("s.dat","r");
+  fread(&beg,sizeof(int),1,vfp);
+  fclose(vfp);
+  printf("\nbeg=%d\n",beg);
   FILE *f=fopen("program.o","rb");
 
   initMem();
@@ -647,11 +651,11 @@ void main()
   fseek(f,0,SEEK_SET);
 
   n=codeRead(f,s);
-
+  c=i=beg;
   flag=0;
   while(flag==0)
   {
-    if(i==n){
+    if(c==n){
       flag=1;
       break;
     }
@@ -998,8 +1002,9 @@ void main()
       {
         rs=extractBits(s[i],5,6);
         ra=extractBits(s[i],5,11);
-        lr=stack[0x0000003FFFFFFFF0/4-r[29]];
+        lr=stack[0x0000003FFFFFFFF0/4-r[29]-1];
         r[29]++;
+        printf("\nlr=%ld\n",lr);
         printf("\n bclr \n");
         if(extractBits(cr,1,33+ra))
           i=lr-1;

@@ -1371,8 +1371,11 @@ void decToBinary(int n,int bit,char tr[][33],int i)
     int j = 0,l;
     if(n==0)
     {
-      for(j=0;j<bit;j++)
-        strcat(tr[i],"0");
+      strcpy(binaryNum,"0");
+      for(j=0;j<bit-1;j++)
+        strcat(binaryNum,"0");
+      binaryNum[bit]='\0';
+
     }
     else if(n>0)
     {
@@ -1444,7 +1447,8 @@ void decToBinary(int n,int bit,char tr[][33],int i)
       binaryNum[l]='1';
     }
     }
-    strcat(tr[i],binaryNum);
+
+      strcat(tr[i],binaryNum);
     //printf("\n%s",tr[i]);
 
 
@@ -1471,7 +1475,7 @@ void main()
   FILE * vfp = fopen("vars.txt","w");
   FILE * fp = fopen("prg1.asm","r");
 
-  int n=0;
+  int n=0,main;
   char a[1000];
 
   while(fgets(a,1000,fp))
@@ -1620,6 +1624,10 @@ void main()
           strcpy(st[labels].name,token);
           st[labels].location=i;
           labels++;
+          if(strcmp(st[labels-1].name,"main")==0)
+          {
+            main = st[labels-1].location-nofl-labels+1;
+          }
         }
         else if(strcmp(insset[i].mne,"ld")==0)
         {
@@ -1970,6 +1978,8 @@ void main()
         {
           //char aa[]="1";
           strcpy(tr[i],"010010");
+          //printf("\nbl=%s",tr[i]);
+
           for(j=0;j<labels;j++)
           {
             if(strcmp(st[j].name,insset[i].op1)==0)
@@ -1979,13 +1989,19 @@ void main()
           {
             h=atoi(insset[i].op1);
             decToBinary(h,24,tr,i);
+            printf("\nbl=%s",tr[i]);
+
           }
           else
           {
             decToBinary(st[j].location-j-nofl,24,tr,i);
+            //printf("\nbl=%s",tr[i]);
+
           }
+          //printf("\nbl=%s\n%d",tr[i],st[j].location-j-nofl);
           strcat(tr[i],"01");
           tr[i][32]='\0';
+          //printf("\nbl=%s",tr[i]);
 
         }
         else if(strcmp(insset[i].mne,"bclr")==0)
@@ -2093,7 +2109,11 @@ void main()
 
   fclose(vfp);
   //write into output file
+  vfp=fopen("s.dat","w");
+  fwrite(&main,sizeof(int),1,vfp);
+  fclose(vfp);
   fp=fopen("program.o","wb");
+  //fwrite(&main,sizeof(int),1,fp);
   for(i=0;i<n;i++)
   {
 
