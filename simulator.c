@@ -605,23 +605,19 @@ void main()
 
     FILE *source=fopen(fname,"r");
     if( access(fname, F_OK ) == -1 ) {
-      printf("\n File %s doesnt exist!",fname);
+      printf("\n File '%s' doesnt exist!\n",fname);
+      exit(0);
     }
     //else flag=1;
   //};
-  FILE *dest=fopen("program.asm","w");
-
-  while( ( ch = fgetc(source) ) != EOF )
-      fputc(ch, dest);
 
   fclose(source);
-  fclose(dest);
 
   pid_t pid = fork();
   if(pid==0)
   {
-    char *args[]={"./asm",NULL};
-    execvp(args[0],args);
+    char *args[]={fname,NULL};
+    execvp("./asm",args);
     exit(0);
   }
   else
@@ -1016,5 +1012,7 @@ void main()
   };
 
   fclose(f);
-//  free(mem);
+  remove("/s.dat");
+  remove("/vars.txt");
+  //  free(mem);
 }

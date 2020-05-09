@@ -104,9 +104,9 @@ void remove_comments(char s[][1000],int *p)
   *p=n;
 }
 
-void asmRead(char s[][1000])
+void asmRead(char s[][1000],char *argv[])
 {
-  FILE * f = fopen("prg1.asm","r");
+  FILE * f = fopen(argv[0],"r");
   //printf("\nin asm");
   int i=0,n=100;
   while(fgets(s[i++],n,f)){
@@ -1470,10 +1470,10 @@ int convert(char n[])
 }
 
 
-void main()
+void main(int argc, char *argv[])
 {
   FILE * vfp = fopen("vars.txt","w");
-  FILE * fp = fopen("prg1.asm","r");
+  FILE * fp = fopen(argv[0],"r");
 
   int n=0,main;
   char a[1000];
@@ -1486,7 +1486,7 @@ void main()
 
   char s[n][1000],t[n][1000];
 
-  asmRead(s);
+  asmRead(s,argv);
 
 
   char dat[n][1000];
